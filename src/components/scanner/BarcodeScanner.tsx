@@ -51,26 +51,9 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
       constraints: {
         width: width,
         height: height,
-        facingMode: facingMode,
-        aspectRatio: {
-          min: 1,
-          max: 2
-        }
-      },
-      area: {
-        top: '0%',
-        right: '0%',
-        left: '0%',
-        bottom: '0%'
-      },
-      singleChannel: false
+        facingMode: facingMode
+      }
     },
-    locator: {
-      patchSize: 'small',  // Reduced from 'medium' for better detection of distant/small barcodes
-      halfSample: false    // Disabled to use full resolution for better accuracy
-    },
-    numOfWorkers: 2,
-    frequency: 10,
     decoder: {
       readers: [
         'code_128_reader',
@@ -82,28 +65,20 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
         'upc_reader',
         'upc_e_reader',
         'i2of5_reader'
-      ],
-      debug: {
-        showCanvas: false,
-        showPatches: false,
-        showFoundPatches: false,
-        showSkeleton: false,
-        showLabels: false,
-        showPatchLabels: false,
-        showRemainingPatchLabels: false,
-        boxFromPatches: {
-          showTransformed: false,
-          showTransformedBox: false,
-          showBB: false
-        }
-      }
+      ] as string[]
     },
+    locator: {
+      patchSize: 'small',  // Reduced from 'medium' for better detection of distant/small barcodes
+      halfSample: false    // Disabled to use full resolution for better accuracy
+    },
+    numOfWorkers: 2,
+    frequency: 10,
     locate: true
   }), [width, height, facingMode]);
 
   // Handle barcode detection with debouncing
   const handleDetected = useCallback((result: QuaggaJSResultObject) => {
-    console.log('🎯 [handleDetected] Callback invoked, isActive:', isActive, 'isInitialized:', isInitialized);
+    console.log('[handleDetected] Callback invoked, isActive:', isActive, 'isInitialized:', isInitialized);
     const code = result.codeResult.code;
     
     console.log('📷 [Scanner] Barcode detected:', {
@@ -227,11 +202,11 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
       
       // Add onProcessed for frame-by-frame debugging
       Quagga.onProcessed((result) => {
-        if (result && result.boxes) {
-          console.log('📊 [Scanner] Frame processed - boxes found:', result.boxes.length);
+        if (result && result.boxes && result.boxes.length > 0) {
+          console.log('📊 [Scanner] Frame processed - boxes found:', result.boxes.length, 'codeResult:', !!result.codeResult);
         }
         if (result && result.codeResult) {
-          console.log('🔍 [Scanner] Code result in frame:', result.codeResult);
+          console.log('🔍 [Scanner] Code result in frame:', result.codeResult.code, 'format:', result.codeResult.format);
         }
       });
     });
@@ -353,7 +328,7 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
         className={`relative overflow-hidden rounded-lg ${
           error ? 'bg-gray-100 border-2 border-dashed border-gray-300' : 'bg-black'
         }`}
-        style={{ width: width, height: height }}
+        style={{ width: '100%', height: '100%', maxWidth: width, maxHeight: height }}
       >
         {error && (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
