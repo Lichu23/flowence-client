@@ -20,6 +20,7 @@
     "@stripe/stripe-js": "^8.1.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/qrcode": "^1.5.6",
+    "@zxing/library": "^0.21.3",
     "dotenv": "^17.2.3",
     "jest-environment-jsdom": "^30.2.0",
     "lucide-react": "^0.545.0",
