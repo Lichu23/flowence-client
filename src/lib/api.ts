@@ -144,8 +144,6 @@ export async function apiRequest<T>(
 
   try {
     const fullUrl = `${API_URL}${endpoint}`;
-    console.log("🌐 API Request:", fullUrl);
-    console.log("🌐 API Options:", options);
 
     const response = await fetch(fullUrl, {
       ...options,
