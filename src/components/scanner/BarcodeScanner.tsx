@@ -30,6 +30,14 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   
+  // Debug: Log component mount
+  useEffect(() => {
+    console.log('🔵 [BarcodeScanner] Component mounted');
+    return () => {
+      console.log('🔴 [BarcodeScanner] Component unmounted');
+    };
+  }, []);
+  
   // Debouncing state to prevent multiple detections
   const lastDetectedCode = useRef<string>('');
   const detectionTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -95,6 +103,7 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
 
   // Handle barcode detection with debouncing
   const handleDetected = useCallback((result: QuaggaJSResultObject) => {
+    console.log('🎯 [handleDetected] Callback invoked, isActive:', isActive, 'isInitialized:', isInitialized);
     const code = result.codeResult.code;
     
     console.log('📷 [Scanner] Barcode detected:', {
@@ -159,6 +168,11 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
     }, 2000); // 2 second cooldown period
     
   }, [onDetected, isActive, isInitialized]);
+  
+  // Debug: Log handleDetected changes
+  useEffect(() => {
+    console.log('🔄 [DEBUG] handleDetected dependency changed');
+  }, [handleDetected]);
 
   // Initialize scanner
   const initializeScanner = useCallback(() => {
@@ -212,6 +226,11 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
       console.log('👂 [Scanner] Detection handler registered');
     });
   }, [handleDetected, onError, isInitialized, config, facingMode, width, height]);
+  
+  // Debug: Log initializeScanner changes
+  useEffect(() => {
+    console.log('🔄 [DEBUG] initializeScanner dependency changed');
+  }, [initializeScanner]);
 
   // Start scanner
   useEffect(() => {
@@ -226,6 +245,11 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
       return () => clearTimeout(timer);
     }
   }, [isActive, initializeScanner, isInitialized, error]);
+  
+  // Debug: Log initialization effect
+  useEffect(() => {
+    console.log('📊 [DEBUG] Initialization effect - isActive:', isActive, 'isInitialized:', isInitialized, 'error:', error);
+  }, [isActive, isInitialized, error]);
 
   // Cleanup on unmount or when inactive
   useEffect(() => {
@@ -255,6 +279,11 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
         setIsInitialized(false);
       }
     };
+  }, [isActive, isInitialized, handleDetected]);
+  
+  // Debug: Log cleanup effect dependencies
+  useEffect(() => {
+    console.log('📊 [DEBUG] Cleanup effect - isActive:', isActive, 'isInitialized:', isInitialized, 'handleDetected:', !!handleDetected);
   }, [isActive, isInitialized, handleDetected]);
 
   // Handle pause/resume
@@ -300,6 +329,11 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
       }
     }
   }, [isActive, isInitialized]);
+  
+  // Debug: Log pause/resume effect
+  useEffect(() => {
+    console.log('📊 [DEBUG] Pause/resume effect - isActive:', isActive, 'isInitialized:', isInitialized);
+  }, [isActive, isInitialized])
 
   return (
     <div className="relative">
