@@ -58,16 +58,16 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
         }
       },
       area: {
-        top: '10%',
-        right: '10%',
-        left: '10%',
-        bottom: '10%'
+        top: '0%',
+        right: '0%',
+        left: '0%',
+        bottom: '0%'
       },
       singleChannel: false
     },
     locator: {
-      patchSize: 'medium',
-      halfSample: true
+      patchSize: 'small',  // Reduced from 'medium' for better detection of distant/small barcodes
+      halfSample: false    // Disabled to use full resolution for better accuracy
     },
     numOfWorkers: 2,
     frequency: 10,
@@ -224,6 +224,16 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
       // Set up detection handler
       Quagga.onDetected(handleDetected);
       console.log('👂 [Scanner] Detection handler registered');
+      
+      // Add onProcessed for frame-by-frame debugging
+      Quagga.onProcessed((result) => {
+        if (result && result.boxes) {
+          console.log('📊 [Scanner] Frame processed - boxes found:', result.boxes.length);
+        }
+        if (result && result.codeResult) {
+          console.log('🔍 [Scanner] Code result in frame:', result.codeResult);
+        }
+      });
     });
   }, [handleDetected, onError, isInitialized, config, facingMode, width, height]);
   
@@ -271,6 +281,7 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
       if (isInitialized) {
         try {
           Quagga.offDetected(handleDetected);
+          Quagga.offProcessed(() => {}); // Remove all processed handlers
           Quagga.stop();
           console.log('⏹️ [Scanner] Scanner stopped and cleaned up');
         } catch (err) {

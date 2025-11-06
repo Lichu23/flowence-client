@@ -36,8 +36,8 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 
 // Debug logging
-console.log("🔍 API_URL:", API_URL);
-console.log("🔍 NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
+// console.log("🔍 API_URL:", API_URL);
+// console.log("🔍 NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
 
 // Helper function to get token from localStorage
 const getToken = (): string | null => {
