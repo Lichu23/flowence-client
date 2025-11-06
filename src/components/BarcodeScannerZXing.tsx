@@ -34,8 +34,6 @@ interface BarcodeScannerZXingProps {
   showToggleButton?: boolean;
   /** Whether to start scanning automatically when component mounts */
   autoStart?: boolean;
-  /** Additional class name for the video container */
-  className?: string;
 }
 
 const BarcodeScannerZXing: React.FC<BarcodeScannerZXingProps> = ({
@@ -46,6 +44,7 @@ const BarcodeScannerZXing: React.FC<BarcodeScannerZXingProps> = ({
   scanDelay = 100,
   className = "",
   style = {},
+  autoStart = true,
   formats = [
     "EAN_13",
     "CODE_128",
@@ -371,7 +370,7 @@ const BarcodeScannerZXing: React.FC<BarcodeScannerZXingProps> = ({
       isMounted.current = false;
       cleanup();
     };
-  }, [getVideoDevices, cleanup, autoStart]);
+  }, [getVideoDevices, cleanup, autoStart, selectedDevice, startScanner]);
   
   // Handle device changes
   useEffect(() => {
