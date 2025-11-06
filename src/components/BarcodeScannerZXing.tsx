@@ -32,6 +32,10 @@ interface BarcodeScannerZXingProps {
   showDeviceSelector?: boolean;
   /** Whether to show camera toggle button */
   showToggleButton?: boolean;
+  /** Whether to start scanning automatically when component mounts */
+  autoStart?: boolean;
+  /** Additional class name for the video container */
+  className?: string;
 }
 
 const BarcodeScannerZXing: React.FC<BarcodeScannerZXingProps> = ({
@@ -342,14 +346,22 @@ const BarcodeScannerZXing: React.FC<BarcodeScannerZXingProps> = ({
     
     const init = async () => {
       try {
-        await getVideoDevices();
+        const availableDevices = await getVideoDevices();
         
-        // If we have devices but none selected, select the first one
-        if (devices.length > 0 && !selectedDevice) {
-          setSelectedDevice(devices[0].deviceId);
+        if (availableDevices.length > 0) {
+          const deviceId = selectedDevice || availableDevices[0]?.deviceId;
+          if (deviceId) {
+            setSelectedDevice(deviceId);
+            if (autoStart) {
+              await startScanner();
+            }
+          }
+        } else {
+          setCameraError('No camera devices found');
         }
       } catch (error) {
         console.error('Initialization error:', error);
+        setCameraError('Failed to access camera. Please check permissions.');
       }
     };
     
@@ -359,7 +371,7 @@ const BarcodeScannerZXing: React.FC<BarcodeScannerZXingProps> = ({
       isMounted.current = false;
       cleanup();
     };
-  }, [getVideoDevices, cleanup, selectedDevice, devices]);
+  }, [getVideoDevices, cleanup, autoStart]);
   
   // Handle device changes
   useEffect(() => {
@@ -367,6 +379,7 @@ const BarcodeScannerZXing: React.FC<BarcodeScannerZXingProps> = ({
       startScanner();
     }
   }, [selectedDevice, startScanner, isInitialized]);
+  
 
   // Calculate the aspect ratio class based on the video dimensions
   const getAspectRatioClass = useCallback(() => {

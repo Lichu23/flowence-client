@@ -48,11 +48,21 @@ export default function BarcodeTestPage() {
 
           {isScannerOpen && (
             <div className="w-full max-w-md mx-auto">
-              <BarcodeScannerZXing  
-                onScan={(result) => console.log("Scanned:", result)}
-                onError={(error) => console.error("Scanner error:", error)}
-                debug={process.env.NODE_ENV === "development"}
-              />{" "}
+              <div className="w-full h-[400px] bg-black rounded-lg overflow-hidden">
+                <BarcodeScannerZXing  
+                  onScan={(result) => {
+                    console.log("Scanned:", result);
+                    handleScan(result);
+                  }}
+                  onError={(error) => {
+                    console.error("Scanner error:", error);
+                    handleError(error);
+                  }}
+                  debug={process.env.NODE_ENV === "development"}
+                  autoStart={true}
+                  className="w-full h-full"
+                />
+              </div>
               <div className="mt-4 text-center">
                 <button
                   onClick={() => setIsScannerOpen(false)}
