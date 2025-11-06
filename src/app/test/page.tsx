@@ -1,6 +1,6 @@
 "use client";
 
-import BarcodeScannerZXing from "@/components/BarcodeScanerZXing";
+import BarcodeScannerZXing from "@/components/BarcodeScannerZXing";
 import { useToast } from "@/components/ui";
 import { useState } from "react";
 
@@ -48,12 +48,11 @@ export default function BarcodeTestPage() {
 
           {isScannerOpen && (
             <div className="w-full max-w-md mx-auto">
-              <BarcodeScannerZXing
-                onScan={handleScan}
-                onError={handleError}
-                facingMode="environment"
-                className="rounded-lg border-2 border-gray-200"
-              />
+              <BarcodeScannerZXing  
+                onScan={(result) => console.log("Scanned:", result)}
+                onError={(error) => console.error("Scanner error:", error)}
+                debug={process.env.NODE_ENV === "development"}
+              />{" "}
               <div className="mt-4 text-center">
                 <button
                   onClick={() => setIsScannerOpen(false)}
