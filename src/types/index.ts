@@ -7,7 +7,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'owner' | 'employee';
+  role: "owner" | "employee";
   created_at: string;
   updated_at: string;
 }
@@ -17,7 +17,7 @@ export interface StoreListItem {
   name: string;
   address?: string;
   phone?: string;
-  role: 'owner' | 'employee';
+  role: "owner" | "employee";
   logo_url?: string;
 }
 
@@ -65,8 +65,8 @@ export interface Sale {
   id: string;
   store_id: string;
   receipt_number: string;
-  payment_method: 'cash' | 'card' | 'mixed';
-  payment_status: 'completed' | 'refunded' | 'cancelled' | 'pending';
+  payment_method: "cash" | "card" | "mixed";
+  payment_status: "completed" | "refunded" | "cancelled" | "pending";
   total: number;
   discount?: number;
   created_at: string;
@@ -138,8 +138,8 @@ export interface Invitation {
   store_id: string;
   email: string;
   token: string;
-  role: 'employee' | 'owner';
-  status: 'pending' | 'accepted' | 'expired' | 'revoked';
+  role: "employee" | "owner";
+  status: "pending" | "accepted" | "expired" | "revoked";
   invited_by: string;
   expires_at: string;
   accepted_at?: string;
@@ -150,7 +150,7 @@ export interface Invitation {
 export interface SendInvitationData {
   store_id: string;
   email: string;
-  role: 'employee' | 'owner';
+  role: "employee" | "owner";
 }
 
 export interface AcceptInvitationData {
@@ -195,6 +195,20 @@ export interface Product {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface CartProduct {
+  id: string;
+  name: string;
+  price: number;
+  barcode?: string;
+  sku?: string;
+}
+
+export interface CartItem {
+  product: CartProduct;
+  quantity: number;
+  price: number; // This might be redundant since it's in product.price
 }
 
 export interface CreateProductData {
@@ -265,8 +279,8 @@ export interface ProductFilters {
   low_stock?: boolean;
   page?: number;
   limit?: number;
-  sort_by?: 'name' | 'price' | 'stock' | 'created_at';
-  sort_order?: 'asc' | 'desc';
+  sort_by?: "name" | "price" | "stock" | "created_at";
+  sort_order?: "asc" | "desc";
 }
 
 export interface ProductStats {
@@ -315,8 +329,8 @@ export interface StockMovement {
   id: string;
   product_id: string;
   store_id: string;
-  movement_type: 'restock' | 'adjustment' | 'sale' | 'return';
-  stock_type: 'deposito' | 'venta';
+  movement_type: "restock" | "adjustment" | "sale" | "return";
+  stock_type: "deposito" | "venta";
   quantity_change: number;
   quantity_before: number;
   quantity_after: number;
@@ -350,4 +364,3 @@ export interface DashboardStats {
   overallRevenue?: number; // Total revenue across all time (not just monthly)
   overallExpenses?: number; // Total expenses across all time (not just monthly)
 }
-

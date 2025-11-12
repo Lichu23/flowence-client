@@ -10,7 +10,6 @@ interface ReprintButtonProps {
 }
 
 export const ReprintButton: React.FC<ReprintButtonProps> = ({
-  saleId,
   receiptNumber,
   disabled = false,
   size = 'md',

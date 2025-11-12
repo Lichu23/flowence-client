@@ -13,8 +13,6 @@ import { productApi } from '@/lib/api';
 import { Product, UpdateProductData, ProductFormData } from '@/types';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useSettings } from '@/contexts/SettingsContext';
-import ScannerModal from '@/components/scanner/ScannerModal';
-import ScannerButton from '@/components/common/ScannerButton';
 import { useToast } from '@/components/ui/Toast';
 import { HelpButton } from '@/components/help/HelpModal';
 
@@ -34,17 +32,16 @@ function ProductsContent() {
   // Filters
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 500); // 500ms delay
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [showActive, setShowActive] = useState<boolean | undefined>(undefined);
+  const [showActive] = useState<boolean | undefined>(undefined);
   const [showLowStock, setShowLowStock] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [categories, setCategories] = useState<string[]>([]);
   
   // Form states
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   
-  // Scanner states
-  const [showScanner, setShowScanner] = useState(false);
+  // Form data state
   const [formData, setFormData] = useState<ProductFormData>({
     store_id: currentStore?.id || '',
     name: '',
@@ -100,9 +97,9 @@ function ProductsContent() {
       
       const result = await productApi.getAll(currentStore.id, {
         search: debouncedSearch || undefined,
-        category: selectedCategory || undefined,
         is_active: showActive,
         low_stock: showLowStock,
+        category: selectedCategory || undefined,
         page: currentPage,
         limit: 20,
         sort_by: 'created_at',
@@ -111,6 +108,18 @@ function ProductsContent() {
 
       setProducts(result.products || []);
       setTotalProducts(result.pagination?.total || 0);
+      
+      // Extract unique categories from products
+      if (result.products) {
+        const uniqueCategories = Array.from(
+          new Set(
+            result.products
+              .map(product => product.category)
+              .filter(Boolean) as string[]
+          )
+        );
+        setCategories(uniqueCategories);
+      }
       setTotalPages(result.pagination?.pages || 0);
       setStats(result.stats || { total_products: 0, total_value: 0, low_stock_count: 0, out_of_stock_count: 0, categories_count: 0 });
     } catch (error) {
@@ -123,7 +132,7 @@ function ProductsContent() {
     } finally {
       setLoading(false);
     }
-  }, [currentStore, debouncedSearch, selectedCategory, showActive, showLowStock, currentPage]);
+  }, [currentStore, debouncedSearch, showActive, showLowStock, selectedCategory, currentPage]);
 
   const loadCategories = useCallback(async () => {
     if (!currentStore) return;
@@ -328,19 +337,6 @@ function ProductsContent() {
   };
 
   // Handle scanner product found
-  const handleScannerProductFound = (product: Product) => {
-    // Clear any filters to ensure the scanned product is visible
-    setSearch('');
-    setSelectedCategory('');
-    setShowActive(undefined);
-    setShowLowStock(false);
-    
-    // Refresh products list to ensure the scanned product appears
-    loadProducts();
-    
-    // Optional: Show a success message or highlight the product
-    console.log('Scanned product found:', product);
-  };
 
   const calculateProfit = (price: number, cost: number) => {
     const profit = price - cost;
@@ -428,15 +424,6 @@ function ProductsContent() {
                   )}
                 </div>
                 
-                {/* Scanner Button */}
-                <ScannerButton
-                  onClick={() => setShowScanner(true)}
-                  size="md"
-                  variant="outline"
-                  className="whitespace-nowrap"
-                >
-                  <span className="hidden sm:inline">Escanear</span>
-                </ScannerButton>
               </div>
             </div>
 
@@ -1091,14 +1078,7 @@ function ProductsContent() {
         )}
       </main>
       
-      {/* Scanner Modal */}
-      <ScannerModal
-        isOpen={showScanner}
-        onClose={() => setShowScanner(false)}
-        onProductFound={handleScannerProductFound}
-        storeId={currentStore.id}
-        title="Escanear Producto"
-      />
+    
 
       {/* Help Button */}
       <HelpButton />
