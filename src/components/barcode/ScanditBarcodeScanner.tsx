@@ -56,7 +56,22 @@ export default function ScanditBarcodeScanner({
     if (!barcodeCaptureRef.current) return;
 
     const barcodeCapture = barcodeCaptureRef.current;
-    barcodeCapture.isEnabled = () => !paused;
+    
+    // Update the barcode capture enabled state
+    const updateBarcodeCapture = async () => {
+      try {
+        if (paused) {
+          // When paused, disable barcode capture
+          await barcodeCapture.setEnabled(false);
+        } else {
+          // When resuming, re-enable barcode capture
+          await barcodeCapture.setEnabled(true);
+        }
+      } catch (error) {
+        console.error("Error updating barcode capture state:", error);
+        onError?.(new Error("Failed to update barcode capture state"));
+      }
+    };
 
     // Handle camera state
     const updateCameraState = async () => {
@@ -73,6 +88,7 @@ export default function ScanditBarcodeScanner({
       }
     };
 
+    updateBarcodeCapture();
     updateCameraState();
 
     return () => {

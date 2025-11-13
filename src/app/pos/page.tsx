@@ -4,15 +4,14 @@ import { Navbar } from "@/components/Navbar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { useCart, CartProduct } from "@/contexts/CartContext";
-import { useCallback } from "react";
+import { CartProduct, useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useStore } from "@/contexts/StoreContext";
 import { productApi, salesApi } from "@/lib/api";
-import { ScanBarcode, X } from "lucide-react";
+import { X } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 // Import types
 import { ProductFilters } from "@/types";
@@ -55,7 +54,7 @@ function POSContent() {
   const [adding, setAdding] = useState(false);
   const [scannerError, setScannerError] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
-
+  console.log(isScannerPaused);
   // Handle barcode search
   const handleBarcodeScan = async (barcode: string) => {
     try {
@@ -239,16 +238,66 @@ function POSContent() {
               >
                 {adding ? "Agregando..." : "Agregar"}
               </button>
-              <button
-                onClick={() => setShowScanner(!showScanner)}
-                className="flex-1 sm:flex-initial px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 flex items-center justify-center text-sm"
-                type="button"
-              >
-                <ScanBarcode className="w-4 h-4 mr-2" />
-                {showScanner ? "Ocultar Escáner" : "Escanear"}
-              </button>
             </div>
           </div>
+
+          {/* Inline Scanner in Cart */}
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-gray-700">
+                Escanear producto
+              </h3>
+              <button
+                onClick={() => setIsScannerPaused(!isScannerPaused)}
+                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+              >
+                {isScannerPaused ? (
+                  <>
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Reanudar
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                    Pausar
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="scanner-inline">
+              <ScanditBarcodeScanner
+                onScanSuccess={handleBarcodeScan}
+                onError={(error) => {
+                  console.error("Scanner error:", error);
+                  setScannerError(
+                    "Error al inicializar el escáner. Por favor, recarga la página."
+                  );
+                  toast.error("Error al inicializar el escáner");
+                }}
+                paused={isScannerPaused}
+              />
+            </div>
+            {scannerError && (
+              <div className="mt-2 text-xs text-red-600 text-center">
+                {scannerError}
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold">Carrito Temporal</h2>
             <span className="text-sm text-gray-600">
@@ -302,48 +351,6 @@ function POSContent() {
               ))}
             </ul>
           )}
-          {/* Inline Scanner in Cart */}
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-700">Escanear producto</h3>
-              <button
-                onClick={() => setIsScannerPaused(!isScannerPaused)}
-                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
-              >
-                {isScannerPaused ? (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                    Reanudar
-                  </>
-                ) : (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                    </svg>
-                    Pausar
-                  </>
-                )}
-              </button>
-            </div>
-            <div className="scanner-inline">
-              <ScanditBarcodeScanner
-                onScanSuccess={handleBarcodeScan}
-                onError={(error) => {
-                  console.error("Scanner error:", error);
-                  setScannerError("Error al inicializar el escáner. Por favor, recarga la página.");
-                  toast.error("Error al inicializar el escáner");
-                }}
-                paused={isScannerPaused}
-              />
-            </div>
-            {scannerError && (
-              <div className="mt-2 text-xs text-red-600 text-center">
-                {scannerError}
-              </div>
-            )}
-          </div>
 
           <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
             <div className="text-xs sm:text-sm text-gray-700">
@@ -365,7 +372,6 @@ function POSContent() {
       {showScanner && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
-
             <div className="p-4 border-b flex justify-between items-center">
               <h3 className="text-lg font-semibold">
                 Escanear Código de Barras
