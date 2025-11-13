@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import {
-  DataCaptureContext,
-  Camera,
-  FrameSourceState,
-} from "@scandit/web-datacapture-core";
-import {
-  barcodeCaptureLoader,
   BarcodeCapture,
+  barcodeCaptureLoader,
   BarcodeCaptureSettings,
   Symbology,
 } from "@scandit/web-datacapture-barcode";
+import {
+  Camera,
+  DataCaptureContext,
+  FrameSourceState,
+} from "@scandit/web-datacapture-core";
+import { useEffect, useRef } from "react";
 
 interface ScanditBarcodeScannerProps {
   onScanSuccess: (barcode: string) => void;
@@ -30,7 +30,6 @@ export default function ScanditBarcodeScanner({
 }: ScanditBarcodeScannerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<DataCaptureViewType | null>(null);
-  const [scannedValue, setScannedValue] = useState<string | null>(null);
   const lastScannedRef = useRef<{ barcode: string; timestamp: number } | null>(
     null
   );
@@ -133,15 +132,11 @@ export default function ScanditBarcodeScanner({
             const barcode = session.newlyRecognizedBarcode;
             const now = Date.now();
 
-            // Skip if we don't have valid barcode data or if we're already processing a scan
-            if (
-              !barcode?.data ||
-              typeof barcode.data !== "string" ||
-              scannedValue
-            )
+            // Skip if we don't have valid barcode data
+            if (!barcode?.data || typeof barcode.data !== "string") {
               return;
+            }
 
-            // TypeScript now knows barcode.data is a string
             const barcodeData = barcode.data;
 
             // Check if this is the same barcode scanned recently
@@ -161,7 +156,7 @@ export default function ScanditBarcodeScanner({
             // Set new scan with debounce
             scanTimeoutRef.current = setTimeout(async () => {
               try {
-                setScannedValue(barcodeData);
+                // Don't update the local state, just call the success handler
                 onScanSuccess(barcodeData);
                 lastScannedRef.current = {
                   barcode: barcodeData,
@@ -237,8 +232,7 @@ export default function ScanditBarcodeScanner({
       // Execute the cleanup
       cleanup().catch(console.error);
     };
-  }, [onScanSuccess, onError, licenseKey, scannedValue]);
-
+  }, [onScanSuccess, onError, licenseKey]);
 
   // Style for the scanner container to maintain consistent dimensions
   const scannerContainerStyle = {
@@ -258,31 +252,29 @@ export default function ScanditBarcodeScanner({
 
   return (
     <div style={scannerContainerStyle}>
-      {scannedValue ? (
-        <></>
-      ) : (
-        <div
-          className="scandit-barcode-scanner"
-          ref={containerRef}
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "relative",
-            backgroundColor: "#000",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#fff",
-          }}
-        >
-          <div style={{ textAlign: "center", padding: "1rem" }}>
-            <div>Escaneando códigos de barras...</div>
-            <div style={{ fontSize: "0.8rem", marginTop: "0.5rem", opacity: 0.7 }}>
-              Apunta la cámara al código de barras
-            </div>
+      <div
+        className="scandit-barcode-scanner"
+        ref={containerRef}
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "relative",
+          backgroundColor: "#000",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fff",
+        }}
+      >
+        <div style={{ textAlign: "center", padding: "1rem" }}>
+          <div>Escaneando códigos de barras...</div>
+          <div
+            style={{ fontSize: "0.8rem", marginTop: "0.5rem", opacity: 0.7 }}
+          >
+            Apunta la cámara al código de barras
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
