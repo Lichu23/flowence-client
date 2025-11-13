@@ -259,52 +259,7 @@ export default function ScanditBarcodeScanner({
   return (
     <div style={scannerContainerStyle}>
       {scannedValue ? (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(240, 240, 240, 0.95)",
-            padding: "1rem",
-            textAlign: "center",
-            fontSize: "1.1rem",
-            zIndex: 10,
-          }}
-        >
-          <div style={{ marginBottom: "0.5rem" }}>Código escaneado:</div>
-          <div
-            style={{
-              fontWeight: "bold",
-              backgroundColor: "#e9ecef",
-              padding: "0.5rem 1rem",
-              borderRadius: "4px",
-              wordBreak: "break-all",
-              marginBottom: "1rem",
-            }}
-          >
-            {scannedValue}
-          </div>
-          <button
-            onClick={() => setScannedValue(null)}
-            style={{
-              padding: "0.5rem 1rem",
-              backgroundColor: "#4f46e5",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "0.9rem",
-            }}
-          >
-            Escanear otro código
-          </button>
-        </div>
+        <></>
       ) : (
         <div
           className="scandit-barcode-scanner"
