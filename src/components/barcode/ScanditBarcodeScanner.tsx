@@ -53,46 +53,74 @@ export default function ScanditBarcodeScanner({
 
   // Effect to handle pausing/resuming the scanner
   useEffect(() => {
-    if (!barcodeCaptureRef.current) return;
-
-    const barcodeCapture = barcodeCaptureRef.current;
+    if (!barcodeCaptureRef.current || !contextRef.current) return;
     
-    // Update the barcode capture enabled state
-    const updateBarcodeCapture = async () => {
+    const barcodeCapture = barcodeCaptureRef.current;
+    const camera = contextRef.current.frameSource as Camera | null;
+
+    const cleanupScanner = async () => {
       try {
-        if (paused) {
-          // When paused, disable barcode capture
-          await barcodeCapture.setEnabled(false);
-        } else {
-          // When resuming, re-enable barcode capture
-          await barcodeCapture.setEnabled(true);
+        // Disable barcode capture
+        await barcodeCapture.setEnabled(false);
+        
+        // Turn off the camera
+        if (camera) {
+          await camera.switchToDesiredState(FrameSourceState.Off);
+        }
+        
+        // Clear the view
+        if (viewRef.current) {
+          const view = viewRef.current;
+          if (view.element && view.element.parentNode) {
+            view.element.parentNode.removeChild(view.element);
+          }
+          viewRef.current = null;
         }
       } catch (error) {
-        console.error("Error updating barcode capture state:", error);
-        onError?.(new Error("Failed to update barcode capture state"));
+        console.error("Error cleaning up scanner:", error);
+        onError?.(new Error("Failed to clean up scanner"));
       }
     };
 
-    // Handle camera state
-    const updateCameraState = async () => {
-      const camera = contextRef.current?.frameSource as Camera | null;
-      if (camera) {
-        try {
-          await camera.switchToDesiredState(
-            paused ? FrameSourceState.Off : FrameSourceState.On
-          );
-        } catch (error) {
-          console.error("Error updating camera state:", error);
-          onError?.(new Error("Failed to update camera state"));
+    const setupScanner = async () => {
+      try {
+        if (!paused) {
+          // Only set up the scanner if not paused
+          if (!viewRef.current && containerRef.current) {
+            const { DataCaptureView } = await import(
+              "@scandit/web-datacapture-core"
+            );
+            const view = new DataCaptureView();
+            viewRef.current = view;
+            view.connectToElement(containerRef.current);
+            view.setContext(contextRef.current!);
+          }
+          
+          // Enable barcode capture
+          await barcodeCapture.setEnabled(true);
+          
+          // Turn on the camera
+          if (camera) {
+            await camera.switchToDesiredState(FrameSourceState.On);
+          }
         }
+      } catch (error) {
+        console.error("Error setting up scanner:", error);
+        onError?.(new Error("Failed to set up scanner"));
       }
     };
 
-    updateBarcodeCapture();
-    updateCameraState();
+    if (paused) {
+      cleanupScanner();
+    } else {
+      setupScanner();
+    }
 
     return () => {
       // Cleanup function for the effect
+      if (paused) {
+        cleanupScanner();
+      }
     };
   }, [paused, onError]);
 
@@ -167,10 +195,13 @@ export default function ScanditBarcodeScanner({
                   timestamp: now,
                 };
 
-                // Stop the camera after successful scan
-                const camera = context?.frameSource;
+                // Instead of stopping the camera, just pause the scanning
+                await barcodeCapture?.setEnabled(false);
+                
+                // Keep the camera running but paused
+                const camera = context?.frameSource as Camera | undefined;
                 if (camera) {
-                  await camera.switchToDesiredState(FrameSourceState.Off);
+                  await camera.switchToDesiredState(FrameSourceState.On);
                 }
               } catch (error) {
                 console.error("Error processing barcode scan:", error);
@@ -245,23 +276,92 @@ export default function ScanditBarcodeScanner({
     };
   }, [onScanSuccess, onError, licenseKey, scannedValue]);
 
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      {scannedValue ? (
+  // Style for the scanner container to maintain consistent dimensions
+  const scannerContainerStyle = {
+    width: '100%',
+    height: '300px', // Fixed height for the scanner
+    position: 'relative' as const,
+    overflow: 'hidden',
+    borderRadius: '8px',
+    border: '1px solid #e2e8f0',
+    backgroundColor: '#f5f5f5',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#666',
+    fontSize: '1rem',
+  };
+
+  const renderScannerContent = () => {
+    if (paused) {
+      return (
+        <div style={{
+          padding: '1rem',
+          textAlign: 'center',
+          color: '#666',
+          fontSize: '1rem',
+        }}>
+          <div>Escáner en pausa</div>
+          <div style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>
+            El escáner está desactivado temporalmente
+          </div>
+        </div>
+      );
+    }
+
+    if (scannedValue) {
+      return (
         <div
           style={{
-            padding: "1rem",
-            backgroundColor: "#f0f0f0",
-            borderRadius: "4px",
-            textAlign: "center",
-            fontSize: "1.2rem",
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(240, 240, 240, 0.9)',
+            padding: '1rem',
+            textAlign: 'center',
+            fontSize: '1.1rem',
           }}
         >
-          Scanned: <strong>{scannedValue}</strong>
+          <div style={{ marginBottom: '0.5rem' }}>Código escaneado:</div>
+          <div style={{ 
+            fontWeight: 'bold',
+            backgroundColor: '#e9ecef',
+            padding: '0.5rem 1rem',
+            borderRadius: '4px',
+            wordBreak: 'break-all'
+          }}>
+            {scannedValue}
+          </div>
         </div>
-      ) : (
-        <div className="scandit-barcode-scanner" ref={containerRef} />
-      )}
+      );
+    }
+
+    return (
+      <div 
+        className="scandit-barcode-scanner" 
+        ref={containerRef} 
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0
+        }}
+      />
+    );
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div style={scannerContainerStyle}>
+        {renderScannerContent()}
+      </div>
       {scannedValue && (
         <button
           onClick={async () => {
@@ -290,7 +390,6 @@ export default function ScanditBarcodeScanner({
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
-            // ... rest of your styles
           }}
         >
           Scan Again
