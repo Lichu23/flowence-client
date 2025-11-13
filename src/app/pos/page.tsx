@@ -70,57 +70,6 @@ function POSContent() {
     }
   };
 
-  // const handleBarcodeSearch = useCallback(
-  //   async (barcode: string) => {
-  //     if (!barcode.trim() || !currentStore) return;
-
-  //     setLoading(true);
-  //     try {
-  //       // Search for products with the given barcode
-  //       const response = await productApi.getAll(currentStore.id, {
-  //         search: barcode,
-  //       } as ProductFilters);
-  //       const products = response.products || [];
-
-  //       // Try to find exact barcode match
-  //       const product =
-  //         products.find((p) => p.barcode === barcode) || products[0];
-
-  //       if (product) {
-  //         // Check if product is already in cart
-  //         const existingItem = items.find(
-  //           (item) => item.product.id === product.id
-  //         );
-
-  //         if (existingItem) {
-  //           // If product exists in cart, increase quantity
-  //           updateQuantity(product.id, existingItem.quantity + 1);
-  //           toast.success(`Cantidad actualizada: ${product.name}`);
-  //         } else {
-  //           // Create a CartProduct from the full Product
-  //           const cartProduct: CartProduct = {
-  //             id: product.id,
-  //             name: product.name,
-  //             price: product.price,
-  //             barcode: product.barcode || undefined,
-  //             sku: product.sku || undefined,
-  //           };
-
-  //           addItem(cartProduct, 1);
-  //           toast.success(`Producto agregado: ${product.name}`);
-  //         }
-  //       } else {
-  //         toast.warning("Producto no encontrado");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error searching product by barcode:", error);
-  //       toast.error("Error al buscar el producto");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   },
-  //   [currentStore, items, updateQuantity, addItem, toast]
-  // );
 
   const validateStock = async () => {
     if (items.length === 0) return false;
