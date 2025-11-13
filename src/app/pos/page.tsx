@@ -8,7 +8,6 @@ import { CartProduct, useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useStore } from "@/contexts/StoreContext";
 import { productApi, salesApi } from "@/lib/api";
-import { X } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useCallback, useState } from "react";
@@ -49,12 +48,9 @@ function POSContent() {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "card" | "qr">(
     "cash"
   );
-  const [showScanner, setShowScanner] = useState(false);
   const [search, setSearch] = useState("");
   const [adding, setAdding] = useState(false);
   const [scannerError, setScannerError] = useState<string | null>(null);
-  const [isScannerPaused, setIsScannerPaused] = useState(false);
-  console.log(isScannerPaused);
   // Handle barcode search
   const handleBarcodeScan = async (barcode: string) => {
     try {
@@ -247,36 +243,6 @@ function POSContent() {
               <h3 className="text-sm font-medium text-gray-700">
                 Escanear producto
               </h3>
-              <button
-                onClick={() => setIsScannerPaused(!isScannerPaused)}
-                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
-              >
-                {isScannerPaused ? (
-                  <>
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                    Reanudar
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                    </svg>
-                    Pausar
-                  </>
-                )}
-              </button>
             </div>
             <div className="scanner-inline">
               <ScanditBarcodeScanner
@@ -288,7 +254,6 @@ function POSContent() {
                   );
                   toast.error("Error al inicializar el escáner");
                 }}
-                paused={isScannerPaused}
               />
             </div>
             {scannerError && (
@@ -367,73 +332,6 @@ function POSContent() {
           </div>
         </div>
       </main>
-
-      {/* Scanner Overlay - Single instance of the scanner */}
-      {showScanner && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
-            <div className="p-4 border-b flex justify-between items-center">
-              <h3 className="text-lg font-semibold">
-                Escanear Código de Barras
-              </h3>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setIsScannerPaused(!isScannerPaused)}
-                  className="px-3 py-1 text-sm border rounded hover:bg-gray-100"
-                >
-                  {isScannerPaused ? "Reanudar escáner" : "Pausar escáner"}
-                </button>
-                <button
-                  onClick={() => setShowScanner(false)}
-                  className="p-1 rounded-full hover:bg-gray-100"
-                  aria-label="Cerrar escáner"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Scanner Error Message */}
-            {scannerError && (
-              <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-4 mt-4 rounded">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg
-                      className="h-5 w-5 text-red-500"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm text-red-700">{scannerError}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="p-4 flex-1 overflow-auto">
-              <div className="h-full w-full">
-                <ScanditBarcodeScanner
-                  onScanSuccess={handleBarcodeScan}
-                  onError={(error) => {
-                    console.error("Scanner error:", error);
-                    setScannerError(
-                      "Error al inicializar el escáner. Por favor, recarga la página."
-                    );
-                  }}
-                  paused={isScannerPaused}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Payment Modal */}
       {showPayment && (
