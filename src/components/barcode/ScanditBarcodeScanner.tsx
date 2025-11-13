@@ -16,6 +16,7 @@ import {
 interface ScanditBarcodeScannerProps {
   onScanSuccess: (barcode: string) => void;
   onError?: (error: Error) => void;
+  paused?: boolean;
 }
 
 type DataCaptureViewType =
@@ -27,11 +28,14 @@ type DataCaptureViewType =
 export default function ScanditBarcodeScanner({
   onScanSuccess,
   onError,
+  paused = false,
 }: ScanditBarcodeScannerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<DataCaptureViewType | null>(null);
   const [scannedValue, setScannedValue] = useState<string | null>(null);
-  const lastScannedRef = useRef<{barcode: string; timestamp: number} | null>(null);
+  const lastScannedRef = useRef<{ barcode: string; timestamp: number } | null>(
+    null
+  );
   const scanTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const licenseKey = process.env.NEXT_PUBLIC_SCANDIT_LICENSE_KEY;
   if (!licenseKey) {
@@ -42,7 +46,42 @@ export default function ScanditBarcodeScanner({
 
   const initializeScanner = useRef<(() => Promise<void>) | null>(null);
 
+  // Keep track of the current barcode capture instance
+  const barcodeCaptureRef = useRef<BarcodeCapture | null>(null);
+  const contextRef = useRef<DataCaptureContext | null>(null);
+  const isMountedRef = useRef(true);
+
+  // Effect to handle pausing/resuming the scanner
   useEffect(() => {
+    if (!barcodeCaptureRef.current) return;
+
+    const barcodeCapture = barcodeCaptureRef.current;
+    barcodeCapture.isEnabled = () => !paused;
+
+    // Handle camera state
+    const updateCameraState = async () => {
+      const camera = contextRef.current?.frameSource as Camera | null;
+      if (camera) {
+        try {
+          await camera.switchToDesiredState(
+            paused ? FrameSourceState.Off : FrameSourceState.On
+          );
+        } catch (error) {
+          console.error("Error updating camera state:", error);
+          onError?.(new Error("Failed to update camera state"));
+        }
+      }
+    };
+
+    updateCameraState();
+
+    return () => {
+      // Cleanup function for the effect
+    };
+  }, [paused, onError]);
+
+  useEffect(() => {
+    isMountedRef.current = true;
     let context: DataCaptureContext | null = null;
     let barcodeCapture: BarcodeCapture | null = null;
 
@@ -68,47 +107,57 @@ export default function ScanditBarcodeScanner({
 
         // Create barcode capture mode with the settings
         barcodeCapture = await BarcodeCapture.forContext(context, settings);
+        barcodeCaptureRef.current = barcodeCapture;
+        contextRef.current = context;
 
         // Set up the barcode capture behavior
         barcodeCapture.addListener({
           didScan: async (barcodeCaptureMode, session) => {
             const barcode = session.newlyRecognizedBarcode;
             const now = Date.now();
-            
+
             // Skip if we don't have valid barcode data or if we're already processing a scan
-            if (!barcode?.data || typeof barcode.data !== 'string' || scannedValue) return;
-            
+            if (
+              !barcode?.data ||
+              typeof barcode.data !== "string" ||
+              scannedValue
+            )
+              return;
+
             // TypeScript now knows barcode.data is a string
             const barcodeData = barcode.data;
-            
+
             // Check if this is the same barcode scanned recently
             if (
-              lastScannedRef.current && 
-              lastScannedRef.current.barcode === barcodeData && 
-              (now - lastScannedRef.current.timestamp) < 2000 // 2 second cooldown for same barcode
+              lastScannedRef.current &&
+              lastScannedRef.current.barcode === barcodeData &&
+              now - lastScannedRef.current.timestamp < 2000 // 2 second cooldown for same barcode
             ) {
               return;
             }
-            
+
             // Clear any pending scan
             if (scanTimeoutRef.current) {
               clearTimeout(scanTimeoutRef.current);
             }
-            
+
             // Set new scan with debounce
             scanTimeoutRef.current = setTimeout(async () => {
               try {
                 setScannedValue(barcodeData);
                 onScanSuccess(barcodeData);
-                lastScannedRef.current = { barcode: barcodeData, timestamp: now };
-                
+                lastScannedRef.current = {
+                  barcode: barcodeData,
+                  timestamp: now,
+                };
+
                 // Stop the camera after successful scan
                 const camera = context?.frameSource;
                 if (camera) {
                   await camera.switchToDesiredState(FrameSourceState.Off);
                 }
               } catch (error) {
-                console.error('Error processing barcode scan:', error);
+                console.error("Error processing barcode scan:", error);
                 setScannedValue(null); // Reset to allow new scans
               }
             }, 100); // 100ms debounce delay
@@ -139,16 +188,19 @@ export default function ScanditBarcodeScanner({
     };
 
     initializeScanner.current = initScanner;
+    
+    // Initialize the scanner when the component mounts
     initScanner();
-
-    // Cleanup function
+    
     // Cleanup function
     return () => {
+      isMountedRef.current = false;
+
       // Clear any pending timeouts
       if (scanTimeoutRef.current) {
         clearTimeout(scanTimeoutRef.current);
       }
-      
+
       const cleanup = async () => {
         try {
           const view = viewRef.current;
@@ -163,6 +215,10 @@ export default function ScanditBarcodeScanner({
               view.element.parentNode.removeChild(view.element);
             }
           }
+
+          // Clear refs
+          barcodeCaptureRef.current = null;
+          contextRef.current = null;
         } catch (error) {
           console.error("Error during cleanup:", error);
         }

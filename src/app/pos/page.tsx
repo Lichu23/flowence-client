@@ -54,6 +54,7 @@ function POSContent() {
   const [search, setSearch] = useState("");
   const [adding, setAdding] = useState(false);
   const [scannerError, setScannerError] = useState<string | null>(null);
+  const [isScannerPaused, setIsScannerPaused] = useState(false);
 
   // Handle barcode search
   const handleBarcodeScan = async (barcode: string) => {
@@ -69,7 +70,6 @@ function POSContent() {
       setLoading(false);
     }
   };
-
 
   const validateStock = async () => {
     if (items.length === 0) return false;
@@ -302,6 +302,49 @@ function POSContent() {
               ))}
             </ul>
           )}
+          {/* Inline Scanner in Cart */}
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-gray-700">Escanear producto</h3>
+              <button
+                onClick={() => setIsScannerPaused(!isScannerPaused)}
+                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+              >
+                {isScannerPaused ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Reanudar
+                  </>
+                ) : (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                    Pausar
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="scanner-inline">
+              <ScanditBarcodeScanner
+                onScanSuccess={handleBarcodeScan}
+                onError={(error) => {
+                  console.error("Scanner error:", error);
+                  setScannerError("Error al inicializar el escáner. Por favor, recarga la página.");
+                  toast.error("Error al inicializar el escáner");
+                }}
+                paused={isScannerPaused}
+              />
+            </div>
+            {scannerError && (
+              <div className="mt-2 text-xs text-red-600 text-center">
+                {scannerError}
+              </div>
+            )}
+          </div>
+
           <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
             <div className="text-xs sm:text-sm text-gray-700">
               Subtotal: {formatCurrency(subtotal)} · Total:{" "}
@@ -322,17 +365,26 @@ function POSContent() {
       {showScanner && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
+
             <div className="p-4 border-b flex justify-between items-center">
               <h3 className="text-lg font-semibold">
                 Escanear Código de Barras
               </h3>
-              <button
-                onClick={() => setShowScanner(false)}
-                className="p-1 rounded-full hover:bg-gray-100"
-                aria-label="Cerrar escáner"
-              >
-                <X className="h-5 w-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsScannerPaused(!isScannerPaused)}
+                  className="px-3 py-1 text-sm border rounded hover:bg-gray-100"
+                >
+                  {isScannerPaused ? "Reanudar escáner" : "Pausar escáner"}
+                </button>
+                <button
+                  onClick={() => setShowScanner(false)}
+                  className="p-1 rounded-full hover:bg-gray-100"
+                  aria-label="Cerrar escáner"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             </div>
 
             {/* Scanner Error Message */}
@@ -369,6 +421,7 @@ function POSContent() {
                       "Error al inicializar el escáner. Por favor, recarga la página."
                     );
                   }}
+                  paused={isScannerPaused}
                 />
               </div>
             </div>
