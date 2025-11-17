@@ -1,30 +1,30 @@
 export function Footer() {
   return (
-    <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-white/5">
+    <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-border">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
-            <h4 className="font-semibold mb-4">Productos</h4>
-            <ul className="space-y-2 text-sm text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">POS</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Inventario</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Reportes</a></li>
+            <h4 className="font-semibold text-foreground mb-4">Productos</h4>
+            <ul className="space-y-2 text-sm text-foreground-muted">
+              <li><a href="#" className="hover:text-foreground hover-contrast transition-colors">POS</a></li>
+              <li><a href="#" className="hover:text-foreground hover-contrast transition-colors">Inventario</a></li>
+              <li><a href="#" className="hover:text-foreground hover-contrast transition-colors">Reportes</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Empresa</h4>
-            <ul className="space-y-2 text-sm text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Nosotros</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contacto</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+            <h4 className="font-semibold text-foreground mb-4">Empresa</h4>
+            <ul className="space-y-2 text-sm text-foreground-muted">
+              <li><a href="#" className="hover:text-foreground hover-contrast transition-colors">Nosotros</a></li>
+              <li><a href="#" className="hover:text-foreground hover-contrast transition-colors">Contacto</a></li>
+              <li><a href="#" className="hover:text-foreground hover-contrast transition-colors">Blog</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Soporte</h4>
-            <ul className="space-y-2 text-sm text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Ayuda</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Documentación</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">API</a></li>
+            <h4 className="font-semibold text-foreground mb-4">Soporte</h4>
+            <ul className="space-y-2 text-sm text-foreground-muted">
+              <li><a href="#" className="hover:text-foreground hover-contrast transition-colors">Ayuda</a></li>
+              <li><a href="#" className="hover:text-foreground hover-contrast transition-colors">Documentación</a></li>
+              <li><a href="#" className="hover:text-foreground hover-contrast transition-colors">API</a></li>
             </ul>
           </div>
           <div>
@@ -32,15 +32,15 @@ export function Footer() {
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center text-white font-bold text-sm">
                 F
               </div>
-              <span className="font-semibold">Flowence</span>
+              <span className="font-semibold text-foreground">Flowence</span>
             </div>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-foreground-muted">
               Gestiona tu negocio en minutos
             </p>
           </div>
         </div>
-        
-        <div className="pt-8 border-t border-white/5 text-center text-sm text-gray-400">
+
+        <div className="pt-8 border-t border-border text-center text-sm text-foreground-muted">
           <p>© 2025 Flowence. Todos los derechos reservados.</p>
         </div>
       </div>

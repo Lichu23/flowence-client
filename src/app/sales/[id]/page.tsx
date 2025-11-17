@@ -110,30 +110,30 @@ function SaleDetailsContent() {
   if (!user || !currentStore) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background bg-grid">
       <Navbar />
       <main className="max-w-5xl mx-auto p-4">
         <div className="flex items-center justify-between mb-3">
-          <h1 className="text-2xl font-bold">Venta {sale?.receipt_number}</h1>
-          <button className="text-sm text-gray-600 hover:underline" onClick={() => router.back()}>Volver</button>
+          <h1 className="text-2xl font-bold text-foreground">Venta {sale?.receipt_number}</h1>
+          <button className="text-sm text-foreground-muted hover:text-foreground hover-contrast" onClick={() => router.back()}>Volver</button>
         </div>
 
-        <div className="bg-white rounded-lg border p-3 mb-3 text-sm">
+        <div className="glass-card p-3 mb-3 text-sm">
           <div className="flex flex-wrap gap-4">
-            <div><span className="text-gray-500">Estado:</span> <span className="capitalize">{sale?.payment_status}</span></div>
-            <div><span className="text-gray-500">Fecha:</span> {sale?.created_at ? new Date(sale.created_at).toLocaleString() : ""}</div>
+            <div><span className="text-foreground-muted">Estado:</span> <span className="capitalize text-foreground">{sale?.payment_status}</span></div>
+            <div><span className="text-foreground-muted">Fecha:</span> <span className="text-foreground">{sale?.created_at ? new Date(sale.created_at).toLocaleString() : ""}</span></div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border overflow-x-auto">
+        <div className="glass-card overflow-x-auto">
           {loading ? (
-            <div className="p-6 text-center text-gray-500">Cargando...</div>
+            <div className="p-6 text-center text-foreground-muted">Cargando...</div>
           ) : rows.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">Sin items</div>
+            <div className="p-6 text-center text-foreground-muted">Sin items</div>
           ) : (
             <table className="w-full min-w-max text-sm">
               <thead>
-                <tr className="border-b bg-gray-50">
+                <tr className="border-b border-border bg-card">
                   <th className="p-2 text-left"><input type="checkbox" aria-label="Seleccionar todo"
                     checked={rows.every(r => selected[r.item.id])}
                     onChange={(e) => {
@@ -143,12 +143,12 @@ function SaleDetailsContent() {
                       setSelected(next);
                     }}
                   /></th>
-                  <th className="p-2 text-left">Producto</th>
-                  <th className="p-2 text-right">Vendido</th>
-                  <th className="p-2 text-right">Devuelto</th>
-                  <th className="p-2 text-right">Restante</th>
-                  <th className="p-2 text-right">Cantidad a devolver</th>
-                  <th className="p-2 text-left">Tipo</th>
+                  <th className="p-2 text-left text-foreground-muted">Producto</th>
+                  <th className="p-2 text-right text-foreground-muted">Vendido</th>
+                  <th className="p-2 text-right text-foreground-muted">Devuelto</th>
+                  <th className="p-2 text-right text-foreground-muted">Restante</th>
+                  <th className="p-2 text-right text-foreground-muted">Cantidad a devolver</th>
+                  <th className="p-2 text-left text-foreground-muted">Tipo</th>
                 </tr>
               </thead>
               <tbody>
@@ -158,7 +158,7 @@ function SaleDetailsContent() {
                   const type = types[item.id] ?? "customer_mistake";
                   const canAct = maxQty > 0;
                   return (
-                    <tr key={item.id} className={`border-b last:border-0 ${s.remaining_quantity === 0 ? "bg-green-50" : ""}`}>
+                    <tr key={item.id} className={`border-b border-border last:border-0 ${s.remaining_quantity === 0 ? "bg-success/10" : ""}`}>
                       <td className="p-2 align-top">
                         <input type="checkbox"
                           disabled={!canAct}
@@ -167,16 +167,16 @@ function SaleDetailsContent() {
                         />
                       </td>
                       <td className="p-2">
-                        <div className="font-medium">{item.product_name}</div>
-                        <div className="text-xs text-gray-500">{item.stock_type === "venta" ? "Piso de venta" : "Depósito"}</div>
+                        <div className="font-medium text-foreground">{item.product_name}</div>
+                        <div className="text-xs text-foreground-subtle">{item.stock_type === "venta" ? "Piso de venta" : "Depósito"}</div>
                       </td>
-                      <td className="p-2 text-right">{item.quantity}</td>
-                      <td className="p-2 text-right">{s.returned_quantity}</td>
-                      <td className="p-2 text-right">{s.remaining_quantity}</td>
+                      <td className="p-2 text-right text-foreground">{item.quantity}</td>
+                      <td className="p-2 text-right text-foreground">{s.returned_quantity}</td>
+                      <td className="p-2 text-right text-foreground">{s.remaining_quantity}</td>
                       <td className="p-2 text-right">
                         <input
                           type="number"
-                          className="w-24 px-2 py-1 border rounded text-right disabled:opacity-50"
+                          className="input-field w-24 text-right disabled:opacity-50"
                           min={0}
                           max={maxQty}
                           value={q}
@@ -190,7 +190,7 @@ function SaleDetailsContent() {
                       </td>
                       <td className="p-2">
                         <select
-                          className="px-2 py-1 border rounded disabled:opacity-50"
+                          className="input-field px-2 py-1 disabled:opacity-50"
                           value={type}
                           disabled={!canAct}
                           onChange={(e) => setTypes(prev => ({ ...prev, [item.id]: e.target.value as 'customer_mistake' | 'defective' }))}
@@ -209,31 +209,31 @@ function SaleDetailsContent() {
 
         {/* Returned Products Section */}
         {returnedProducts.length > 0 && (
-          <div className="bg-white rounded-lg border mt-4">
-            <div className="p-3 border-b bg-gray-50">
-              <h2 className="text-lg font-semibold">Productos Devueltos</h2>
+          <div className="glass-card mt-4">
+            <div className="p-3 border-b border-border bg-card">
+              <h2 className="text-lg font-semibold text-foreground">Productos Devueltos</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full min-w-max text-sm">
                 <thead>
-                  <tr className="border-b bg-gray-50">
-                    <th className="p-2 text-left">Producto</th>
-                    <th className="p-2 text-right">Cantidad</th>
-                    <th className="p-2 text-left">Tipo</th>
-                    <th className="p-2 text-left">Fecha de Devolución</th>
+                  <tr className="border-b border-border bg-card">
+                    <th className="p-2 text-left text-foreground-muted">Producto</th>
+                    <th className="p-2 text-right text-foreground-muted">Cantidad</th>
+                    <th className="p-2 text-left text-foreground-muted">Tipo</th>
+                    <th className="p-2 text-left text-foreground-muted">Fecha de Devolución</th>
                   </tr>
                 </thead>
                 <tbody>
                   {returnedProducts.map((ret, idx) => (
-                    <tr key={`${ret.product_id}-${idx}`} className="border-b last:border-0">
-                      <td className="p-2">{ret.product_name}</td>
-                      <td className="p-2 text-right">{ret.quantity}</td>
+                    <tr key={`${ret.product_id}-${idx}`} className="border-b border-border last:border-0">
+                      <td className="p-2 text-foreground">{ret.product_name}</td>
+                      <td className="p-2 text-right text-foreground">{ret.quantity}</td>
                       <td className="p-2">
-                        <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${ret.return_type === 'defective' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                        <span className={`badge ${ret.return_type === 'defective' ? 'bg-error/10 text-error border-error/20' : 'bg-warning/10 text-warning border-warning/20'}`}>
                           {ret.return_type === 'defective' ? 'Defectuoso' : 'Error del cliente'}
                         </span>
                       </td>
-                      <td className="p-2 text-sm text-gray-600">{new Date(ret.return_date).toLocaleString()}</td>
+                      <td className="p-2 text-sm text-foreground-muted">{new Date(ret.return_date).toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -244,12 +244,12 @@ function SaleDetailsContent() {
 
         <div className="flex flex-wrap gap-2 justify-end mt-3">
           <button
-            className="px-4 py-2 border rounded disabled:opacity-50"
+            className="btn-secondary px-4 py-2 disabled:opacity-50"
             onClick={() => router.back()}
             disabled={saving}
           >Cancelar</button>
           <button
-            className="px-4 py-2 bg-red-600 text-white rounded disabled:opacity-50"
+            className="btn-primary px-4 py-2 bg-error hover:bg-error/80 disabled:opacity-50"
             disabled={saving || !rows.some(r => r.summary.remaining_quantity > 0)}
             onClick={async () => {
               if (!currentStore || !saleId) return;
@@ -286,7 +286,7 @@ function SaleDetailsContent() {
             }}
           >Devolver todo</button>
           <button
-            className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+            className="btn-primary px-4 py-2 disabled:opacity-50"
             disabled={saving || !rows.some(r => selected[r.item.id] && (quantities[r.item.id] ?? 0) > 0)}
             onClick={async () => {
               if (!currentStore || !saleId) return;

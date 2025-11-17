@@ -197,7 +197,7 @@ function POSContent() {
   if (!user || !currentStore) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background bg-grid">
       <Navbar />
       <main className="max-w-5xl mx-auto p-3 sm:p-4">
         <div className="flex items-center gap-2 mb-2">
@@ -210,28 +210,28 @@ function POSContent() {
               className="h-6 w-6 sm:h-8 sm:w-8 object-contain rounded flex-shrink-0"
             />
           )}
-          <h1 className="text-lg sm:text-2xl font-bold truncate">
+          <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
             Caja - {currentStore.name}
           </h1>
         </div>
-        <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6 truncate">
+        <p className="text-xs sm:text-sm text-foreground-subtle mb-4 sm:mb-6 truncate">
           Usuario: {user.name} (
           {user.role === "owner" ? "Propietario" : "Empleado"})
         </p>
 
-        <div className="bg-white rounded-lg border p-3 sm:p-4">
+        <div className="glass-card p-3 sm:p-4">
           <div className="mb-4 flex flex-col sm:flex-row gap-2">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar producto..."
-              className="flex-1 px-3 py-2 border rounded text-sm sm:text-base"
+              className="input-field flex-1 text-sm sm:text-base"
             />
             <div className="flex gap-2">
               <button
                 onClick={addBySearch}
                 disabled={adding || !search.trim()}
-                className="flex-1 sm:flex-initial px-3 py-2 bg-blue-600 text-white rounded disabled:opacity-50 text-sm sm:text-base whitespace-nowrap"
+                className="btn-primary flex-1 sm:flex-initial disabled:opacity-50 text-sm sm:text-base whitespace-nowrap"
               >
                 {adding ? "Agregando..." : "Agregar"}
               </button>
@@ -239,9 +239,9 @@ function POSContent() {
           </div>
 
           {/* Inline Scanner in Cart */}
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="mt-4 p-4 glass-card">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-700">
+              <h3 className="text-sm font-medium text-foreground">
                 Escanear producto
               </h3>
             </div>
@@ -279,58 +279,58 @@ function POSContent() {
               />
             </div>
             {scannerError && (
-              <div className="mt-2 text-xs text-red-600 text-center">
+              <div className="mt-2 text-xs text-error text-center">
                 {scannerError}
               </div>
             )}
           </div>
 
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold">Carrito Temporal</h2>
-            <span className="text-sm text-gray-600">
+            <h2 className="font-semibold text-foreground">Carrito Temporal</h2>
+            <span className="text-sm text-foreground-muted">
               Artículos: {totalItems}
             </span>
           </div>
 
           {items.length === 0 ? (
-            <div className="text-center text-gray-500 py-10">
+            <div className="text-center text-foreground-subtle py-10">
               Escanea o agrega productos para comenzar
             </div>
           ) : (
-            <ul className="divide-y">
+            <ul className="divide-y divide-border">
               {items.map(({ product, quantity }) => (
                 <li
                   key={product.id}
                   className="py-3 flex items-center gap-2 sm:gap-3"
                 >
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 truncate text-sm sm:text-base">
+                    <div className="font-medium text-foreground truncate text-sm sm:text-base">
                       {product.name}
                     </div>
-                    <div className="text-xs text-gray-500 truncate">
+                    <div className="text-xs text-foreground-subtle truncate">
                       {product.barcode || "s/código"}
                     </div>
                   </div>
                   <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                     <button
                       onClick={() => updateQuantity(product.id, quantity - 1)}
-                      className="px-2 py-1 border rounded text-sm"
+                      className="btn-secondary px-2 py-1 text-sm"
                     >
                       -
                     </button>
-                    <span className="w-6 sm:w-8 text-center text-sm">
+                    <span className="w-6 sm:w-8 text-center text-sm text-foreground">
                       {quantity}
                     </span>
                     <button
                       onClick={() => updateQuantity(product.id, quantity + 1)}
-                      className="px-2 py-1 border rounded text-sm"
+                      className="btn-secondary px-2 py-1 text-sm"
                     >
                       +
                     </button>
                   </div>
                   <button
                     onClick={() => removeItem(product.id)}
-                    className="text-red-600 text-xs sm:text-sm flex-shrink-0"
+                    className="text-error text-xs sm:text-sm flex-shrink-0 hover:text-error/80 transition-colors"
                   >
                     Eliminar
                   </button>
@@ -340,14 +340,14 @@ function POSContent() {
           )}
 
           <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
-            <div className="text-xs sm:text-sm text-gray-700">
+            <div className="text-xs sm:text-sm text-foreground-muted">
               Subtotal: {formatCurrency(subtotal)} · Total:{" "}
               {formatCurrency(total)}
             </div>
             <button
               onClick={handleCheckout}
               disabled={items.length === 0 || loading}
-              className="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50 text-sm sm:text-base whitespace-nowrap"
+              className="btn-primary w-full sm:w-auto disabled:opacity-50 text-sm sm:text-base whitespace-nowrap"
             >
               {loading ? "Validando..." : "Cobrar"}
             </button>
@@ -357,10 +357,10 @@ function POSContent() {
 
       {/* Payment Modal */}
       {showPayment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
-          <div className="bg-white rounded-lg max-w-sm sm:max-w-md w-full p-4 sm:p-6">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
+          <div className="glass-card max-w-sm sm:max-w-md w-full p-4 sm:p-6">
             <div className="flex justify-between items-center mb-3 sm:mb-4">
-              <h3 className="text-base sm:text-lg font-bold">
+              <h3 className="text-base sm:text-lg font-bold text-foreground">
                 Cobrar (
                 {paymentMethod === "cash"
                   ? "Efectivo"
@@ -371,7 +371,7 @@ function POSContent() {
               </h3>
               <button
                 onClick={() => setShowPayment(false)}
-                className="text-gray-500 text-xl sm:text-2xl"
+                className="text-foreground-subtle hover:text-foreground text-xl sm:text-2xl transition-colors"
               >
                 ✕
               </button>
@@ -391,7 +391,7 @@ function POSContent() {
               </div>
             </div>
             <div className="mb-3">
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs sm:text-sm font-medium text-foreground mb-1">
                 Método de pago
               </label>
               <div className="flex gap-3">
@@ -426,20 +426,20 @@ function POSContent() {
             </div>
             {paymentMethod === "cash" && (
               <div className="mb-3 sm:mb-4">
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-1.5">
+                <label className="block text-xs sm:text-sm font-medium text-foreground mb-1 sm:mb-1.5">
                   Monto recibido
                 </label>
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-base sm:text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
+                  className="input-field w-full text-base sm:text-lg"
                   placeholder="0.00"
                   step="0.01"
                 />
                 {amount && parseFloat(amount) > 0 && (
-                  <div className="mt-2 sm:mt-3 p-2.5 sm:p-3  rounded-lg">
-                    <div className="flex justify-between text-black font-semibold text-sm sm:text-base">
+                  <div className="mt-2 sm:mt-3 p-2.5 sm:p-3 glass-card rounded-lg">
+                    <div className="flex justify-between text-foreground font-semibold text-sm sm:text-base">
                       <span>Cambio a devolver:</span>
                       <span>{formatCurrency(change)}</span>
                     </div>
@@ -450,8 +450,8 @@ function POSContent() {
 
             {paymentMethod === "card" && (
               <div className="mb-3 sm:mb-4">
-                <div className="p-4 border rounded bg-gray-50">
-                  <p className="text-center text-gray-600 mb-4">
+                <div className="p-4 glass-card rounded">
+                  <p className="text-center text-foreground-muted mb-4">
                     Integración de pago con tarjeta
                   </p>
                   <button
@@ -459,7 +459,7 @@ function POSContent() {
                     onClick={() => {
                       toast.info("Integración de pago con tarjeta pendiente");
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-secondary w-full disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Completar pago
                   </button>
@@ -469,8 +469,8 @@ function POSContent() {
 
             {paymentMethod === "qr" && (
               <div className="mb-3 sm:mb-4">
-                <div className="p-4 border rounded bg-gray-50">
-                  <p className="text-center text-gray-600 mb-4">
+                <div className="p-4 glass-card rounded">
+                  <p className="text-center text-foreground-muted mb-4">
                     Integración de pago con QR
                   </p>
                   <button
@@ -478,7 +478,7 @@ function POSContent() {
                     onClick={() => {
                       toast.info("Integración de pago con QR pendiente");
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-secondary w-full disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Mostrar código QR
                   </button>
@@ -490,14 +490,14 @@ function POSContent() {
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={() => setShowPayment(false)}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base border rounded"
+                  className="btn-secondary px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={processPayment}
                   disabled={loading || items.length === 0}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-green-600 text-white rounded disabled:opacity-50"
+                  className="btn-primary px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base disabled:opacity-50"
                 >
                   {loading ? "Procesando..." : "Confirmar"}
                 </button>
@@ -508,7 +508,7 @@ function POSContent() {
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={() => setShowPayment(false)}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base border rounded"
+                  className="btn-secondary px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base"
                 >
                   Cancelar
                 </button>
@@ -519,7 +519,7 @@ function POSContent() {
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={() => setShowPayment(false)}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base border rounded"
+                  className="btn-secondary px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base"
                 >
                   Cancelar
                 </button>

@@ -1,5 +1,5 @@
 /**
- * Card Component - Reusable card container
+ * Card Component - Reusable card container with glass morphism
  */
 
 import { ReactNode } from 'react';
@@ -9,13 +9,15 @@ interface CardProps {
   className?: string;
   padding?: 'none' | 'sm' | 'md' | 'lg';
   hover?: boolean;
+  variant?: 'glass' | 'solid';
 }
 
-export function Card({ 
-  children, 
-  className = '', 
+export function Card({
+  children,
+  className = '',
   padding = 'md',
-  hover = false 
+  hover = false,
+  variant = 'glass'
 }: CardProps) {
   const paddingClasses = {
     none: '',
@@ -24,9 +26,13 @@ export function Card({
     lg: 'p-6 sm:p-8'
   };
 
+  const baseClasses = variant === 'glass'
+    ? 'glass-card'
+    : 'bg-card border border-border rounded-2xl shadow-lg-ambient shadow-lg-direct transition-all hover:bg-card-hover hover:border-border-light hover:shadow-xl-ambient hover:shadow-xl-direct';
+
   return (
-    <div 
-      className={`bg-white rounded-lg shadow-sm border border-gray-200 ${paddingClasses[padding]} ${hover ? 'hover:shadow-md transition-shadow' : ''} ${className}`}
+    <div
+      className={`${baseClasses} ${paddingClasses[padding]} ${!hover && variant === 'glass' ? '[&:hover]:bg-card [&:hover]:border-border [&:hover]:shadow-lg-ambient [&:hover]:shadow-lg-direct' : ''} ${className}`}
     >
       {children}
     </div>
@@ -44,11 +50,11 @@ export function CardHeader({ title, subtitle, action, className = '' }: CardHead
   return (
     <div className={`flex items-start justify-between mb-4 ${className}`}>
       <div className="flex-1 min-w-0">
-        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
+        <h3 className="text-lg sm:text-xl font-semibold text-foreground truncate">
           {title}
         </h3>
         {subtitle && (
-          <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
+          <p className="text-sm text-foreground-muted mt-1">{subtitle}</p>
         )}
       </div>
       {action && (
@@ -67,7 +73,7 @@ interface CardFooterProps {
 
 export function CardFooter({ children, className = '' }: CardFooterProps) {
   return (
-    <div className={`mt-4 pt-4 border-t border-gray-200 ${className}`}>
+    <div className={`mt-4 pt-4 border-t border-border ${className}`}>
       {children}
     </div>
   );

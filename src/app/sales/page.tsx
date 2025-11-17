@@ -117,9 +117,9 @@ function SalesContent() {
 
   if (!currentStore) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
         <div className="text-center">
-          <p className="text-sm sm:text-base text-gray-600">
+          <p className="text-sm sm:text-base text-foreground-muted">
             Selecciona una tienda para ver las ventas
           </p>
         </div>
@@ -128,56 +128,56 @@ function SalesContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background bg-grid">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
             Ventas
           </h2>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200">
-            <p className="text-xs text-gray-600 mb-1">Total Ventas</p>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">
+          <div className="glass-card p-3 sm:p-4">
+            <p className="text-xs text-foreground-muted mb-1">Total Ventas</p>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">
               {totalSales}
             </p>
             {(method || status) && (
-              <p className="text-xs text-blue-600 mt-1">
+              <p className="text-xs text-primary mt-1">
                 ({stats.totalSales} en página)
               </p>
             )}
           </div>
-          <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200">
-            <p className="text-xs text-gray-600 mb-1">Ingresos Totales</p>
-            <p className="text-xl sm:text-2xl font-bold text-green-600">
+          <div className="glass-card p-3 sm:p-4">
+            <p className="text-xs text-foreground-muted mb-1">Ingresos Totales</p>
+            <p className="text-xl sm:text-2xl font-bold text-success">
               {formatCurrency(stats.totalRevenue)}
             </p>
           </div>
-          <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200">
-            <p className="text-xs text-gray-600 mb-1">Efectivo</p>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">
+          <div className="glass-card p-3 sm:p-4">
+            <p className="text-xs text-foreground-muted mb-1">Efectivo</p>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">
               {stats.cashSales}
             </p>
           </div>
-          <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200">
-            <p className="text-xs text-gray-600 mb-1">Tarjeta</p>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">
+          <div className="glass-card p-3 sm:p-4">
+            <p className="text-xs text-foreground-muted mb-1">Tarjeta</p>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">
               {stats.cardSales}
             </p>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6">
+        <div className="glass-card p-3 sm:p-4 mb-4 sm:mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {/* Search */}
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-medium text-foreground mb-1">
                 Buscar por Ticket/Código
               </label>
               <div className="flex gap-2">
@@ -187,11 +187,11 @@ function SalesContent() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   placeholder="Número de recibo o código de barras"
-                  className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field flex-1 text-sm sm:text-base"
                 />
                 <button
                   onClick={handleSearch}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors whitespace-nowrap"
+                  className="btn-primary px-4 py-2 text-sm whitespace-nowrap"
                 >
                   Buscar
                 </button>
@@ -200,7 +200,7 @@ function SalesContent() {
 
             {/* Method Filter */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-medium text-foreground mb-1">
                 Método de Pago
               </label>
               <select
@@ -209,7 +209,7 @@ function SalesContent() {
                   setMethod(e.target.value as "cash" | "card" | "mixed" | "");
                   setPage(1);
                 }}
-                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-field w-full text-sm sm:text-base"
               >
                 <option value="">Todos</option>
                 <option value="cash">Efectivo</option>
@@ -220,7 +220,7 @@ function SalesContent() {
 
             {/* Status Filter */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-medium text-foreground mb-1">
                 Estado
               </label>
               <select
@@ -236,7 +236,7 @@ function SalesContent() {
                   );
                   setPage(1);
                 }}
-                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-field w-full text-sm sm:text-base"
               >
                 <option value="">Todos</option>
                 <option value="completed">Completado</option>
@@ -249,18 +249,18 @@ function SalesContent() {
         </div>
 
         {/* Sales List */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="glass-card">
           {loading ? (
             <div className="p-6 sm:p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="text-sm sm:text-base text-gray-600 mt-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="text-sm sm:text-base text-foreground-muted mt-4">
                 Cargando ventas...
               </p>
             </div>
           ) : sales.length === 0 ? (
             <div className="p-6 sm:p-8 text-center">
               <svg
-                className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-3 sm:mb-4"
+                className="w-12 h-12 sm:w-16 sm:h-16 text-foreground-subtle mx-auto mb-3 sm:mb-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -272,7 +272,7 @@ function SalesContent() {
                   d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                 />
               </svg>
-              <p className="text-sm sm:text-base text-gray-600">
+              <p className="text-sm sm:text-base text-foreground-muted">
                 {method || status
                   ? "No se encontraron ventas con los filtros aplicados"
                   : "No hay ventas registradas aún"}
@@ -282,48 +282,48 @@ function SalesContent() {
             <>
               {/* Desktop Table */}
               <div className="hidden lg:block overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-border">
+                  <thead className="bg-card">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-foreground-muted uppercase">
                         Fecha
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-foreground-muted uppercase">
                         Recibo
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-foreground-muted uppercase">
                         Método
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-foreground-muted uppercase">
                         Estado
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-4 py-3 text-right text-xs font-medium text-foreground-muted uppercase">
                         Total
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-4 py-3 text-right text-xs font-medium text-foreground-muted uppercase">
                         Acciones
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="divide-y divide-border">
                     {sales.map((s) => (
                       <tr key={s.id}>
-                        <td className="px-4 py-3 text-sm text-gray-900">
+                        <td className="px-4 py-3 text-sm text-foreground">
                           {formatDateTime(new Date(s.created_at))}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-foreground">
                             {s.receipt_number}
                           </div>
                         </td>
                         <td className="px-4 py-3">
                           <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            className={`badge ${
                               s.payment_method === "cash"
-                                ? "bg-green-100 text-green-800"
+                                ? "bg-success/10 text-success border-success/20"
                                 : s.payment_method === "card"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-purple-100 text-purple-800"
+                                ? "bg-info/10 text-info border-info/20"
+                                : "bg-purple-900/30 text-purple-400 border-purple-500/30"
                             }`}
                           >
                             {s.payment_method === "cash"
@@ -335,14 +335,14 @@ function SalesContent() {
                         </td>
                         <td className="px-4 py-3">
                           <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            className={`badge ${
                               s.payment_status === "completed"
-                                ? "bg-green-100 text-green-800"
+                                ? "bg-success/10 text-success border-success/20"
                                 : s.payment_status === "refunded"
-                                ? "bg-orange-100 text-orange-800"
+                                ? "bg-warning/10 text-warning border-warning/20"
                                 : s.payment_status === "cancelled"
-                                ? "bg-red-100 text-red-800"
-                                : "bg-yellow-100 text-yellow-800"
+                                ? "bg-error/10 text-error border-error/20"
+                                : "bg-warning/10 text-warning border-warning/20"
                             }`}
                           >
                             {s.payment_status === "completed"
@@ -355,7 +355,7 @@ function SalesContent() {
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-foreground">
                             {formatCurrency(Number(s.total))}
                           </div>
                         </td>
@@ -377,13 +377,13 @@ function SalesContent() {
                                   toast.error("Error al descargar recibo");
                                 }
                               }}
-                              className="text-blue-600 hover:text-blue-700 px-2 py-1 hover:bg-blue-50 rounded text-sm"
+                              className="text-primary hover:text-primary/80 px-2 py-1 hover:bg-primary/10 rounded text-sm transition-colors"
                             >
                               PDF
                             </button>
                             <Link
                               href={`/sales/${s.id}`}
-                              className="text-blue-600 hover:text-blue-700 px-2 py-1 hover:bg-blue-50 rounded text-sm"
+                              className="text-primary hover:text-primary/80 px-2 py-1 hover:bg-primary/10 rounded text-sm transition-colors"
                             >
                               Detalles
                             </Link>
@@ -396,27 +396,27 @@ function SalesContent() {
               </div>
 
               {/* Mobile Card View */}
-              <div className="lg:hidden divide-y divide-gray-200">
+              <div className="lg:hidden divide-y divide-border">
                 {sales.map((s) => (
                   <div key={s.id} className="p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex-1 min-w-0 mr-2">
-                        <h3 className="text-base font-semibold text-gray-900">
+                        <h3 className="text-base font-semibold text-foreground">
                           {s.receipt_number}
                         </h3>
-                        <p className="text-xs text-gray-500 mt-0.5">
+                        <p className="text-xs text-foreground-subtle mt-0.5">
                           {formatDateTime(new Date(s.created_at))}
                         </p>
                       </div>
                       <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full flex-shrink-0 ${
+                        className={`badge flex-shrink-0 ${
                           s.payment_status === "completed"
-                            ? "bg-green-100 text-green-800"
+                            ? "bg-success/10 text-success border-success/20"
                             : s.payment_status === "refunded"
-                            ? "bg-orange-100 text-orange-800"
+                            ? "bg-warning/10 text-warning border-warning/20"
                             : s.payment_status === "cancelled"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
+                            ? "bg-error/10 text-error border-error/20"
+                            : "bg-warning/10 text-warning border-warning/20"
                         }`}
                       >
                         {s.payment_status === "completed"
@@ -430,15 +430,15 @@ function SalesContent() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 mb-3">
-                      <div className="bg-gray-50 p-2 rounded">
-                        <p className="text-xs text-gray-600">Total</p>
-                        <p className="text-base font-bold text-gray-900">
+                      <div className="glass-card p-2">
+                        <p className="text-xs text-foreground-muted">Total</p>
+                        <p className="text-base font-bold text-foreground">
                           {formatCurrency(Number(s.total))}
                         </p>
                       </div>
-                      <div className="bg-gray-50 p-2 rounded">
-                        <p className="text-xs text-gray-600">Método</p>
-                        <p className="text-base font-medium text-gray-900">
+                      <div className="glass-card p-2">
+                        <p className="text-xs text-foreground-muted">Método</p>
+                        <p className="text-base font-medium text-foreground">
                           {s.payment_method === "cash"
                             ? "Efectivo"
                             : s.payment_method === "card"
@@ -448,7 +448,7 @@ function SalesContent() {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 pt-2 border-t border-gray-100">
+                    <div className="flex gap-2 pt-2 border-t border-border">
                       <button
                         onClick={async () => {
                           try {
@@ -462,13 +462,13 @@ function SalesContent() {
                             toast.error("Error al descargar recibo");
                           }
                         }}
-                        className="flex-1 px-3 py-2 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors active:scale-95"
+                        className="btn-secondary flex-1 px-3 py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors active:scale-95"
                       >
                         Descargar PDF
                       </button>
                       <Link
                         href={`/sales/${s.id}`}
-                        className="flex-1 px-3 py-2 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors active:scale-95 text-center"
+                        className="btn-secondary flex-1 px-3 py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors active:scale-95 text-center"
                       >
                         Ver Detalles
                       </Link>
@@ -479,22 +479,22 @@ function SalesContent() {
 
               {/* Pagination */}
               {pages > 1 && (
-                <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-xs sm:text-sm text-gray-600">
+                <div className="px-4 py-3 border-t border-border flex items-center justify-between">
+                  <div className="text-xs sm:text-sm text-foreground-muted">
                     Página {page} de {pages} ({totalSales} ventas)
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                      className="btn-secondary px-3 py-1.5 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Anterior
                     </button>
                     <button
                       onClick={() => setPage((p) => Math.min(pages, p + 1))}
                       disabled={page === pages}
-                      className="px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                      className="btn-secondary px-3 py-1.5 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Siguiente
                     </button>

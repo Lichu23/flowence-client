@@ -122,19 +122,19 @@ function EmployeesContent() {
 
   const getStatusBadge = (status: string) => {
     const badges = {
-      pending: "bg-yellow-100 text-yellow-800",
-      accepted: "bg-green-100 text-green-800",
-      expired: "bg-gray-100 text-gray-800",
-      revoked: "bg-red-100 text-red-800",
+      pending: "bg-warning/10 text-warning border-warning/20",
+      accepted: "bg-success/10 text-success border-success/20",
+      expired: "bg-muted text-foreground-muted border-border",
+      revoked: "bg-error/10 text-error border-error/20",
     };
-    return badges[status as keyof typeof badges] || "bg-gray-100 text-gray-800";
+    return badges[status as keyof typeof badges] || "bg-muted text-foreground-muted border-border";
   };
 
   if (!currentStore) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background bg-grid flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">
+          <p className="text-foreground-muted">
             Selecciona una tienda para gestionar empleados
           </p>
         </div>
@@ -143,21 +143,21 @@ function EmployeesContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background bg-grid">
       {/* Header */}
       <Navbar />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
             Gestión de Empleados
           </h2>
 
           {user?.role === "owner" && (
             <button
               onClick={() => setShowInviteForm(true)}
-              className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 active:scale-95"
+              className="btn-primary w-full sm:w-auto px-4 py-2.5 sm:py-2 flex items-center justify-center gap-2 active:scale-95"
             >
               <svg
                 className="w-5 h-5"
@@ -179,7 +179,7 @@ function EmployeesContent() {
 
         {/* Success Message */}
         {inviteSuccess && (
-          <div className="mb-4 sm:mb-6 bg-green-50 border border-green-200 text-green-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg">
+          <div className="mb-4 sm:mb-6 glass-card bg-success/10 border-success/30 text-success px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg">
             <p className="font-medium text-sm sm:text-base break-words">
               {inviteSuccess}
             </p>
@@ -189,7 +189,7 @@ function EmployeesContent() {
         {/* Invite Form Modal */}
         {showInviteForm && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-3 sm:p-4 z-50 overflow-y-auto"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center p-3 sm:p-4 z-50 overflow-y-auto"
             onClick={(e) => {
               // Close modal when clicking outside the modal content
               if (e.target === e.currentTarget) {
@@ -198,16 +198,16 @@ function EmployeesContent() {
             }}
           >
             <div
-              className="bg-white rounded-lg max-w-md w-full p-4 sm:p-6 my-4 sm:my-8 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto shadow-2xl"
+              className="glass-card max-w-md w-full p-4 sm:p-6 my-4 sm:my-8 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-4 sm:mb-5">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900">
+                <h3 className="text-lg sm:text-xl font-bold text-foreground">
                   Invitar Empleado
                 </h3>
                 <button
                   onClick={handleCloseInviteForm}
-                  className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="text-foreground-subtle hover:text-foreground p-1 hover:bg-card rounded-lg transition-colors"
                   aria-label="Cerrar"
                 >
                   <svg

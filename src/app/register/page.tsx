@@ -77,18 +77,18 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
+      <div className="max-w-md w-full glass-card p-8">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Flowence</h1>
-          <p className="text-gray-600 mt-2">Crea tu cuenta</p>
+          <h1 className="text-3xl font-bold text-foreground">Flowence</h1>
+          <p className="text-foreground-muted mt-2">Crea tu cuenta</p>
         </div>
 
         {/* Register Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
               Tu Nombre
             </label>
             <input
@@ -97,13 +97,13 @@ export default function RegisterPage() {
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field"
               placeholder="Juan Pérez"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
               Correo Electrónico
             </label>
             <input
@@ -112,13 +112,13 @@ export default function RegisterPage() {
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field"
               placeholder="tu@ejemplo.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
               Contraseña
             </label>
             <input
@@ -127,16 +127,16 @@ export default function RegisterPage() {
               required
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field"
               placeholder="••••••••"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-foreground-subtle mt-1">
               Debe tener al menos 8 caracteres con mayúscula, minúscula, número y carácter especial
             </p>
           </div>
 
           <div>
-            <label htmlFor="store_name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="store_name" className="block text-sm font-medium text-foreground mb-2">
               Nombre de la Primera Tienda
             </label>
             <input
@@ -145,44 +145,44 @@ export default function RegisterPage() {
               required
               value={formData.store_name}
               onChange={(e) => setFormData({ ...formData, store_name: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field"
               placeholder="Mi Tienda"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-foreground-subtle mt-1">
               Tu primera tienda se creará automáticamente
             </p>
           </div>
 
           <div>
-            <label htmlFor="store_address" className="block text-sm font-medium text-gray-700 mb-2">
-              Dirección de la Tienda <span className="text-gray-400">(Opcional)</span>
+            <label htmlFor="store_address" className="block text-sm font-medium text-foreground mb-2">
+              Dirección de la Tienda <span className="text-foreground-subtle">(Opcional)</span>
             </label>
             <input
               id="store_address"
               type="text"
               value={formData.store_address}
               onChange={(e) => setFormData({ ...formData, store_address: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field"
               placeholder="123 Calle Principal, Ciudad, Estado CP"
             />
           </div>
 
           <div>
-            <label htmlFor="store_phone" className="block text-sm font-medium text-gray-700 mb-2">
-              Teléfono de la Tienda <span className="text-gray-400">(Opcional)</span>
+            <label htmlFor="store_phone" className="block text-sm font-medium text-foreground mb-2">
+              Teléfono de la Tienda <span className="text-foreground-subtle">(Opcional)</span>
             </label>
             <input
               id="store_phone"
               type="tel"
               value={formData.store_phone}
               onChange={(e) => setFormData({ ...formData, store_phone: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field"
               placeholder="+52 (555) 123-4567"
             />
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-error/10 backdrop-blur-sm border border-error/30 text-foreground px-4 py-3 rounded-xl text-sm">
               {error}
             </div>
           )}
@@ -190,7 +190,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn-primary"
           >
             {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
           </button>
@@ -198,9 +198,9 @@ export default function RegisterPage() {
 
         {/* Login Link */}
         <div className="mt-6 text-center">
-          <p className="text-gray-600">
+          <p className="text-foreground-muted">
             ¿Ya tienes una cuenta?{' '}
-            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link href="/login" className="text-primary hover:text-primary/80 hover-contrast font-medium">
               Iniciar Sesión
             </Link>
           </p>

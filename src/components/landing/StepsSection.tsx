@@ -36,10 +36,10 @@ export function StepsSection() {
     <section className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Tan simple como 1, 2, 3
           </h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-foreground-muted max-w-2xl mx-auto leading-relaxed">
             Sin equipos costosos. Sin capacitación compleja. Sin fricción.
           </p>
         </div>
@@ -50,15 +50,15 @@ export function StepsSection() {
           {steps.map((step) => (
             <div key={step.number} className="text-center">
               <div className="relative inline-block mb-6">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center text-2xl font-bold mx-auto shadow-lg shadow-purple-500/50">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center text-2xl font-bold mx-auto shadow-purple-lg">
                   {step.number}
                 </div>
               </div>
               <div className="w-12 h-12 bg-purple-900/30 border border-purple-500/30 rounded-xl flex items-center justify-center mx-auto mb-4">
                 {step.icon}
               </div>
-              <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-              <p className="text-gray-400 leading-relaxed">{step.description}</p>
+              <h3 className="text-xl font-semibold text-foreground mb-3">{step.title}</h3>
+              <p className="text-foreground-muted leading-relaxed">{step.description}</p>
             </div>
           ))}
         </div>
