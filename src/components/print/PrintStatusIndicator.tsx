@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { PrintJobStatus } from '@/hooks/usePrintStatus';
 
 interface PrintStatusIndicatorProps {
@@ -7,7 +7,7 @@ interface PrintStatusIndicatorProps {
   onDismiss?: () => void;
 }
 
-export const PrintStatusIndicator: React.FC<PrintStatusIndicatorProps> = ({
+export const PrintStatusIndicator: FC<PrintStatusIndicatorProps> = ({
   job,
   onRetry,
   onDismiss

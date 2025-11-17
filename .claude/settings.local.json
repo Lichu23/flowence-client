@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(node -e:*)",
+      "Bash(\"C:\\Users\\lisan\\flowence\\flowence-client\\src\\lib\\api\\sales.ts\")",
+      "Bash(\"C:\\Users\\lisan\\flowence\\flowence-client\\src\\lib\\api\\dashboard.ts\")",
+      "Bash(\"C:\\Users\\lisan\\flowence\\flowence-client\\src\\lib\\api\\currency.ts\")",
+      "Bash(\"C:\\Users\\lisan\\flowence\\flowence-client\\src\\lib\\api\\payments.ts\")",
+      "Bash(\"C:\\Users\\lisan\\flowence\\flowence-client\\src\\lib\\api\\index.ts\")",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

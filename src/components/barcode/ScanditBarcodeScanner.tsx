@@ -11,7 +11,7 @@ import {
   DataCaptureContext,
   FrameSourceState,
 } from "@scandit/web-datacapture-core";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ScanditBarcodeScannerProps {
   onScanSuccess: (barcode: string) => void;
@@ -34,6 +34,10 @@ export default function ScanditBarcodeScanner({
     null
   );
   const scanTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [noCameraAvailable, setNoCameraAvailable] = useState(false);
+  const initializationAttemptedRef = useRef(false);
+  const errorReportedRef = useRef(false);
+
   const licenseKey = process.env.NEXT_PUBLIC_SCANDIT_LICENSE_KEY;
   if (!licenseKey) {
     throw new Error(
@@ -98,6 +102,13 @@ export default function ScanditBarcodeScanner({
 
   useEffect(() => {
     isMountedRef.current = true;
+
+    // Prevent multiple initialization attempts
+    if (initializationAttemptedRef.current) {
+      return;
+    }
+    initializationAttemptedRef.current = true;
+
     let context: DataCaptureContext | null = null;
     let barcodeCapture: BarcodeCapture | null = null;
 
@@ -171,9 +182,43 @@ export default function ScanditBarcodeScanner({
 
         // Get the camera and set it up
         const camera = Camera.pickBestGuess();
-        if (camera) {
+        if (!camera) {
+          // No camera available on this device
+          console.warn("No camera available on this device");
+          setNoCameraAvailable(true);
+
+          // Call onError with a specific message but don't throw (only once)
+          if (!errorReportedRef.current) {
+            errorReportedRef.current = true;
+            const noCameraError = new Error(
+              "No camera available on this device"
+            );
+            noCameraError.name = "NoCameraAvailableError";
+            if (onError) onError(noCameraError);
+          }
+          return; // Exit initialization gracefully
+        }
+
+        try {
           await context.setFrameSource(camera);
           await camera.switchToDesiredState(FrameSourceState.On);
+        } catch (cameraError) {
+          // Handle camera access errors (permissions denied, camera in use, etc.)
+          console.error("Error accessing camera:", cameraError);
+          setNoCameraAvailable(true);
+
+          // Only report error once
+          if (!errorReportedRef.current) {
+            errorReportedRef.current = true;
+            const errorMessage =
+              cameraError instanceof Error
+                ? cameraError.message
+                : "Unable to access camera";
+            const error = new Error(errorMessage);
+            error.name = "CameraAccessError";
+            if (onError) onError(error);
+          }
+          return; // Exit initialization gracefully
         }
 
         // Create a view to render the camera preview
@@ -188,7 +233,13 @@ export default function ScanditBarcodeScanner({
         }
       } catch (error) {
         console.error("Error initializing scanner:", error);
-        if (onError) onError(error as Error);
+        setNoCameraAvailable(true);
+
+        // Only report error once
+        if (!errorReportedRef.current) {
+          errorReportedRef.current = true;
+          if (onError) onError(error as Error);
+        }
       }
     };
 
@@ -224,6 +275,10 @@ export default function ScanditBarcodeScanner({
           // Clear refs
           barcodeCaptureRef.current = null;
           contextRef.current = null;
+
+          // Reset initialization flags for potential re-mount
+          initializationAttemptedRef.current = false;
+          errorReportedRef.current = false;
         } catch (error) {
           console.error("Error during cleanup:", error);
         }
@@ -259,21 +314,41 @@ export default function ScanditBarcodeScanner({
           width: "100%",
           height: "100%",
           position: "relative",
-          backgroundColor: "#000",
+          backgroundColor: noCameraAvailable ? "#f5f5f5" : "#000",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#fff",
+          color: noCameraAvailable ? "#666" : "#fff",
         }}
       >
-        <div style={{ textAlign: "center", padding: "1rem" }}>
-          <div>Escaneando códigos de barras...</div>
-          <div
-            style={{ fontSize: "0.8rem", marginTop: "0.5rem", opacity: 0.7 }}
-          >
-            Apunta la cámara al código de barras
+        {noCameraAvailable ? (
+          <div style={{ textAlign: "center", padding: "1rem" }}>
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
+              📷
+            </div>
+            <div style={{ fontWeight: 500 }}>
+              No hay cámara disponible
+            </div>
+            <div
+              style={{
+                fontSize: "0.8rem",
+                marginTop: "0.5rem",
+                opacity: 0.7,
+              }}
+            >
+              Este dispositivo no tiene cámara o el acceso fue denegado
+            </div>
           </div>
-        </div>
+        ) : (
+          <div style={{ textAlign: "center", padding: "1rem" }}>
+            <div>Escaneando códigos de barras...</div>
+            <div
+              style={{ fontSize: "0.8rem", marginTop: "0.5rem", opacity: 0.7 }}
+            >
+              Apunta la cámara al código de barras
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

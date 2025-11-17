@@ -8,6 +8,7 @@
 import { useState, useCallback } from 'react';
 import { apiRequest } from '@/lib/api';
 import { Product } from '@/types';
+import { isValidBarcodeFormat } from '@/utils/validation/barcode';
 
 interface BarcodeSearchResult {
   product: Product | null;
@@ -34,8 +35,7 @@ export const useBarcodeSearch = (): BarcodeSearchResult => {
     }
 
     // Basic barcode validation
-    const barcodeRegex = /^[0-9]{8,14}$/;
-    if (!barcodeRegex.test(barcode)) {
+    if (!isValidBarcodeFormat(barcode)) {
       console.warn('⚠️ [useBarcodeSearch] Invalid barcode format:', barcode);
       setError('Invalid barcode format. Must be 8-14 digits.');
       return null;
@@ -112,8 +112,7 @@ export const useBarcodeSearch = (): BarcodeSearchResult => {
     }
 
     // Basic barcode validation
-    const barcodeRegex = /^[0-9]{8,14}$/;
-    if (!barcodeRegex.test(barcode)) {
+    if (!isValidBarcodeFormat(barcode)) {
       return false;
     }
 

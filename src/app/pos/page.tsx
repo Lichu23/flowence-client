@@ -10,7 +10,7 @@ import { useStore } from "@/contexts/StoreContext";
 import { productApi, salesApi } from "@/lib/api";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 // Import types
 import { ProductFilters } from "@/types";
@@ -51,6 +51,7 @@ function POSContent() {
   const [search, setSearch] = useState("");
   const [adding, setAdding] = useState(false);
   const [scannerError, setScannerError] = useState<string | null>(null);
+  const scannerErrorShownRef = useRef<Set<string>>(new Set());
   // Handle barcode search
   const handleBarcodeScan = async (barcode: string) => {
     try {
@@ -249,10 +250,31 @@ function POSContent() {
                 onScanSuccess={handleBarcodeScan}
                 onError={(error) => {
                   console.error("Scanner error:", error);
-                  setScannerError(
-                    "Error al inicializar el escáner. Por favor, recarga la página."
-                  );
-                  toast.error("Error al inicializar el escáner");
+
+                  // Prevent showing the same error multiple times
+                  const errorKey = error.name || "UnknownError";
+                  if (scannerErrorShownRef.current.has(errorKey)) {
+                    return;
+                  }
+                  scannerErrorShownRef.current.add(errorKey);
+
+                  // Handle different error types
+                  if (error.name === "NoCameraAvailableError") {
+                    // Don't show intrusive error for no camera - the scanner component already shows a message
+                    setScannerError(null);
+                  } else if (error.name === "CameraAccessError") {
+                    setScannerError(
+                      "No se pudo acceder a la cámara. Verifica los permisos."
+                    );
+                    toast.error(
+                      "No se pudo acceder a la cámara. Verifica los permisos."
+                    );
+                  } else {
+                    setScannerError(
+                      "Error al inicializar el escáner. Por favor, recarga la página."
+                    );
+                    toast.error("Error al inicializar el escáner");
+                  }
                 }}
               />
             </div>

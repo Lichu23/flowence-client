@@ -1,16 +1,16 @@
 'use client';
 
-import React from 'react';
+import { FC, ReactNode } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface StripeProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const StripeProvider: React.FC<StripeProviderProps> = ({ children }) => {
+export const StripeProvider: FC<StripeProviderProps> = ({ children }) => {
   return (
     <Elements stripe={stripePromise}>
       {children}

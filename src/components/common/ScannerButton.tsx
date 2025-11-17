@@ -5,7 +5,7 @@
  * Simple button to trigger scanner modal from anywhere in the app
  */
 
-import React from 'react';
+import { FC, ReactNode } from 'react';
 import { Camera } from 'lucide-react';
 
 interface ScannerButtonProps {
@@ -14,10 +14,10 @@ interface ScannerButtonProps {
   size?: 'sm' | 'md' | 'lg';
   variant?: 'primary' | 'secondary' | 'outline';
   disabled?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
-const ScannerButton: React.FC<ScannerButtonProps> = ({
+const ScannerButton: FC<ScannerButtonProps> = ({
   onClick,
   className = '',
   size = 'md',
