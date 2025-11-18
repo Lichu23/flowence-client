@@ -88,28 +88,28 @@ function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: 
 function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
   const styles = {
     success: {
-      bg: 'bg-green-50',
-      border: 'border-green-200',
-      icon: 'text-green-600',
-      text: 'text-green-800'
+      bg: 'bg-success/10',
+      border: 'border-success/30',
+      icon: 'text-success',
+      text: 'text-foreground'
     },
     error: {
-      bg: 'bg-red-50',
-      border: 'border-red-200',
-      icon: 'text-red-600',
-      text: 'text-red-800'
+      bg: 'bg-error/10',
+      border: 'border-error/30',
+      icon: 'text-error',
+      text: 'text-foreground'
     },
     warning: {
-      bg: 'bg-orange-50',
-      border: 'border-orange-200',
-      icon: 'text-orange-600',
-      text: 'text-orange-800'
+      bg: 'bg-warning/10',
+      border: 'border-warning/30',
+      icon: 'text-warning',
+      text: 'text-foreground'
     },
     info: {
-      bg: 'bg-blue-50',
-      border: 'border-blue-200',
-      icon: 'text-blue-600',
-      text: 'text-blue-800'
+      bg: 'bg-info/10',
+      border: 'border-info/30',
+      icon: 'text-info',
+      text: 'text-foreground'
     }
   };
 
@@ -131,8 +131,8 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   const style = styles[toast.type];
 
   return (
-    <div 
-      className={`${style.bg} border ${style.border} rounded-lg p-4 shadow-lg animate-slide-in-right flex items-start gap-3`}
+    <div
+      className={`${style.bg} backdrop-blur-md border ${style.border} rounded-xl p-4 shadow-xl animate-slide-up flex items-start gap-3`}
       role="alert"
     >
       <svg className={`w-5 h-5 ${style.icon} flex-shrink-0 mt-0.5`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,7 +141,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       <p className={`text-sm ${style.text} flex-1`}>{toast.message}</p>
       <button
         onClick={() => onRemove(toast.id)}
-        className={`${style.icon} hover:opacity-70 transition-opacity flex-shrink-0`}
+        className={`${style.icon} hover-contrast active-contrast focus-contrast flex-shrink-0`}
         aria-label="Cerrar"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

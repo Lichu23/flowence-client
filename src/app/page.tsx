@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import Link from "next/link";
 import { Navigation } from "@/components/landing/Navigation";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { AppMockup } from "@/components/landing/AppMockup";
@@ -25,10 +24,10 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent mx-auto"></div>
+          <p className="mt-4 text-foreground-muted">Cargando...</p>
         </div>
       </div>
     );
@@ -39,7 +38,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a14] text-white relative [background-image:linear-gradient(rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.03)_1px,transparent_1px)] [background-size:80px_80px]">
+    <div className="min-h-screen bg-background text-foreground relative bg-grid">
       <Navigation />
 
       <HeroSection />
@@ -53,10 +52,10 @@ export default function Home() {
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
               Todo lo que necesitas para gestionar tu negocio
             </h2>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-foreground-muted max-w-3xl mx-auto leading-relaxed">
               Una plataforma completa con todas las herramientas para operar tu
               supermercado o almacén de manera eficiente.
             </p>
@@ -79,10 +78,10 @@ export default function Home() {
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-4">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
               Precios transparentes para cada etapa
             </h2>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed mb-8">
+            <p className="text-lg text-foreground-muted max-w-2xl mx-auto leading-relaxed mb-8">
               Comienza gratis durante 14 días. Sin tarjeta de crédito requerida.
             </p>
           </div>

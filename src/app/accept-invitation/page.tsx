@@ -93,10 +93,10 @@ function AcceptInvitationContent() {
 
   if (validating) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="text-gray-600 mt-4">Validando invitación...</p>
+      <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
+        <div className="max-w-md w-full glass-card p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-foreground-muted mt-4">Validando invitación...</p>
         </div>
       </div>
     );
@@ -104,16 +104,16 @@ function AcceptInvitationContent() {
 
   if (!validation || !validation.valid) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <svg className="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
+        <div className="max-w-md w-full glass-card p-8 text-center">
+          <svg className="w-16 h-16 text-error mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Invitación Inválida</h2>
-          <p className="text-gray-600 mb-6">{error || 'Esta invitación ha expirado o no es válida'}</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Invitación Inválida</h2>
+          <p className="text-foreground-muted mb-6">{error || 'Esta invitación ha expirado o no es válida'}</p>
           <Link
             href="/login"
-            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="btn-primary inline-block px-6 py-3"
           >
             Ir al Login
           </Link>
@@ -123,22 +123,22 @@ function AcceptInvitationContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
+      <div className="max-w-md w-full glass-card p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Flowence</h1>
-          <p className="text-gray-600 mt-2">Crear Cuenta de Empleado</p>
+          <h1 className="text-3xl font-bold text-foreground">Flowence</h1>
+          <p className="text-foreground-muted mt-2">Crear Cuenta de Empleado</p>
         </div>
 
         {/* Invitation Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-          <p className="text-sm text-blue-900 font-medium">Has sido invitado a:</p>
-          <p className="text-lg font-bold text-blue-900 mt-1">{validation.store?.name}</p>
-          <p className="text-sm text-blue-700 mt-1">
+        <div className="glass-card bg-info/10 border-info/30 rounded-lg p-4 mb-6">
+          <p className="text-sm text-info font-medium">Has sido invitado a:</p>
+          <p className="text-lg font-bold text-info mt-1">{validation.store?.name}</p>
+          <p className="text-sm text-foreground-muted mt-1">
             Email: {validation.invitation?.email}
           </p>
-          <p className="text-sm text-blue-700">
+          <p className="text-sm text-foreground-muted">
             Rol: {validation.invitation?.role}
           </p>
         </div>
@@ -146,7 +146,7 @@ function AcceptInvitationContent() {
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
               Tu Nombre
             </label>
             <input
@@ -155,13 +155,13 @@ function AcceptInvitationContent() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field w-full"
               placeholder="Juan Pérez"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
               Contraseña
             </label>
             <input
@@ -170,16 +170,16 @@ function AcceptInvitationContent() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field w-full"
               placeholder="••••••••"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-foreground-subtle mt-1">
               Mínimo 8 caracteres
             </p>
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground mb-2">
               Confirmar Contraseña
             </label>
             <input
@@ -188,13 +188,13 @@ function AcceptInvitationContent() {
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field w-full"
               placeholder="••••••••"
             />
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div className="glass-card bg-error/10 border-error/30 text-error px-4 py-3 rounded-lg text-sm">
               {error}
             </div>
           )}
@@ -202,7 +202,7 @@ function AcceptInvitationContent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary w-full py-3 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Creando cuenta...' : 'Crear Cuenta y Aceptar'}
           </button>
@@ -210,9 +210,9 @@ function AcceptInvitationContent() {
 
         {/* Footer */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-foreground-muted">
             ¿Ya tienes una cuenta?{' '}
-            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link href="/login" className="text-primary hover:text-primary/80 font-medium hover-contrast">
               Inicia sesión
             </Link>
           </p>
@@ -225,10 +225,10 @@ function AcceptInvitationContent() {
 export default function AcceptInvitationPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="text-gray-600 mt-4">Cargando...</p>
+      <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
+        <div className="max-w-md w-full glass-card p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-foreground-muted mt-4">Cargando...</p>
         </div>
       </div>
     }>

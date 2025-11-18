@@ -19,47 +19,47 @@ export function ErrorMessage({
 }: ErrorMessageProps) {
   const variantStyles = {
     error: {
-      bg: 'bg-red-50',
-      border: 'border-red-200',
-      icon: 'text-red-600',
-      title: 'text-red-800',
-      text: 'text-red-600',
-      button: 'bg-red-600 hover:bg-red-700'
+      bg: 'bg-error/10',
+      border: 'border-error/30',
+      icon: 'text-error',
+      title: 'text-foreground',
+      text: 'text-muted',
+      button: 'btn-primary'
     },
     warning: {
-      bg: 'bg-orange-50',
-      border: 'border-orange-200',
-      icon: 'text-orange-600',
-      title: 'text-orange-800',
-      text: 'text-orange-600',
-      button: 'bg-orange-600 hover:bg-orange-700'
+      bg: 'bg-warning/10',
+      border: 'border-warning/30',
+      icon: 'text-warning',
+      title: 'text-foreground',
+      text: 'text-muted',
+      button: 'btn-primary'
     },
     info: {
-      bg: 'bg-blue-50',
-      border: 'border-blue-200',
-      icon: 'text-blue-600',
-      title: 'text-blue-800',
-      text: 'text-blue-600',
-      button: 'bg-blue-600 hover:bg-blue-700'
+      bg: 'bg-info/10',
+      border: 'border-info/30',
+      icon: 'text-info',
+      title: 'text-foreground',
+      text: 'text-muted',
+      button: 'btn-primary'
     }
   };
 
   const styles = variantStyles[variant];
 
   return (
-    <div className={`${styles.bg} border ${styles.border} rounded-lg p-4 ${className}`}>
+    <div className={`${styles.bg} backdrop-blur-sm border ${styles.border} rounded-xl p-4 ${className}`}>
       <div className="flex items-start gap-3">
-        <svg 
-          className={`w-5 h-5 ${styles.icon} flex-shrink-0 mt-0.5`} 
-          fill="none" 
-          stroke="currentColor" 
+        <svg
+          className={`w-5 h-5 ${styles.icon} flex-shrink-0 mt-0.5`}
+          fill="none"
+          stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
         <div className="flex-1 min-w-0">
@@ -68,7 +68,7 @@ export function ErrorMessage({
           {onRetry && (
             <button
               onClick={onRetry}
-              className={`mt-3 px-4 py-2 text-sm font-medium text-white ${styles.button} rounded-lg transition-colors`}
+              className={`mt-3 ${styles.button}`}
             >
               Reintentar
             </button>

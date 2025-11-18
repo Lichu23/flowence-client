@@ -31,13 +31,13 @@ export function LoadingSpinner({
 
   const spinner = (
     <div className={`flex flex-col items-center justify-center ${className}`}>
-      <div 
-        className={`animate-spin rounded-full border-blue-600 border-t-transparent ${sizeClasses[size]}`}
+      <div
+        className={`animate-spin rounded-full border-purple-600 border-t-transparent ${sizeClasses[size]}`}
         role="status"
         aria-label="Loading"
       />
       {text && (
-        <p className={`mt-3 text-gray-600 ${textSizeClasses[size]}`}>
+        <p className={`mt-3 text-muted ${textSizeClasses[size]}`}>
           {text}
         </p>
       )}
@@ -46,7 +46,7 @@ export function LoadingSpinner({
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-background/90 backdrop-blur-sm flex items-center justify-center z-50">
         {spinner}
       </div>
     );

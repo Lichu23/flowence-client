@@ -51,7 +51,7 @@ export function Navbar() {
   ];
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-card/50 backdrop-blur-lg shadow-md border-b border-crisp sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Desktop and Mobile Top Bar */}
         <div className="flex justify-between items-center py-3 sm:py-4">
@@ -71,10 +71,10 @@ export function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`font-medium transition-colors px-3 py-2 rounded-lg ${
+                    className={`font-medium transition-all px-3 py-2 rounded-lg hover-contrast ${
                       pathname === link.href
-                        ? "text-blue-600 font-semibold bg-blue-50"
-                        : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                        ? "text-purple-400 font-semibold bg-purple-600/10 border border-purple-500/20"
+                        : "text-muted hover:text-foreground hover:bg-glass-5"
                     }`}
                     onClick={(e) => {
                       if (pathname === link.href) {
@@ -88,14 +88,14 @@ export function Navbar() {
             )}
 
             {/* User Info */}
-            <div className="text-sm text-gray-600 border-l border-gray-300 pl-4 hidden lg:block">
+            <div className="text-sm text-muted border-l border-crisp pl-4 hidden lg:block">
               {user?.name}
             </div>
 
             {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="px-3 lg:px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
+              className="btn-secondary text-sm text-error hover:border-error/50"
             >
               Cerrar Sesión
             </button>
@@ -105,15 +105,15 @@ export function Navbar() {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+              className="p-2 rounded-lg hover:bg-card hover-contrast active-contrast focus-contrast transition-all flex-shrink-0"
               aria-label="Alternar menú"
             >
               {mobileMenuOpen ? (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
@@ -126,7 +126,7 @@ export function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
+        <div className="md:hidden border-t border-crisp bg-card/80 backdrop-blur-lg animate-slide-up">
           <nav className="px-3 py-3 space-y-1">
             {/* Navigation Links */}
             {navLinks.map(
@@ -135,10 +135,10 @@ export function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all hover-contrast ${
                       pathname === link.href
-                        ? "text-blue-600 font-semibold bg-blue-50"
-                        : "text-gray-700 hover:bg-gray-50"
+                        ? "text-purple-400 font-semibold bg-purple-600/10 border border-purple-500/20"
+                        : "text-muted hover:bg-glass-5 hover:text-foreground"
                     }`}
                     onClick={(e) => {
                       if (pathname === link.href) {
@@ -154,8 +154,8 @@ export function Navbar() {
             )}
 
             {/* User Info */}
-            <div className="px-4 py-3 border-t border-gray-200 mt-2">
-              <div className="text-sm font-medium text-gray-900">
+            <div className="px-4 py-3 border-t border-crisp mt-2">
+              <div className="text-sm font-medium text-foreground">
                 {user?.name}
               </div>
             </div>
@@ -166,7 +166,7 @@ export function Navbar() {
                 handleLogout();
                 setMobileMenuOpen(false);
               }}
-              className="w-full px-4 py-3 text-base font-medium text-red-600 hover:text-red-700 border border-red-300 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+              className="w-full btn-secondary text-base text-error hover:border-error/50 flex items-center justify-center gap-2"
             >
               <svg
                 className="w-5 h-5"
