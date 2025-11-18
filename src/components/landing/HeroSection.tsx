@@ -8,7 +8,7 @@ export function HeroSection() {
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-foreground">
           Empieza a vender<br />en <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-400">minutos</span>
         </h1>
-        <p className="text-lg text-foreground-muted max-w-3xl mx-auto mb-10 leading-relaxed">
+        <p className="text-lg text-muted max-w-3xl mx-auto mb-10 leading-relaxed">
           Flowence permite que cualquier supermercado o almacén empiece a vender, controlar inventario y gestionar su negocio en minutos, sin equipos costosos, sin instalaciones complejas y sin fricción.
         </p>
 
@@ -24,7 +24,7 @@ export function HeroSection() {
           </button>
         </div>
 
-        <p className="text-sm text-foreground-subtle">
+        <p className="text-sm text-subtle">
           Solo abrir la app, escanear y trabajar. Sin fricción.
         </p>
       </div>

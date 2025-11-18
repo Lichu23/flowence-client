@@ -39,7 +39,7 @@ export function StepsSection() {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Tan simple como 1, 2, 3
           </h2>
-          <p className="text-lg text-foreground-muted max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-muted max-w-2xl mx-auto leading-relaxed">
             Sin equipos costosos. Sin capacitación compleja. Sin fricción.
           </p>
         </div>
@@ -58,7 +58,7 @@ export function StepsSection() {
                 {step.icon}
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-3">{step.title}</h3>
-              <p className="text-foreground-muted leading-relaxed">{step.description}</p>
+              <p className="text-muted leading-relaxed">{step.description}</p>
             </div>
           ))}
         </div>

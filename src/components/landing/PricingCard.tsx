@@ -21,7 +21,7 @@ export function PricingCard({
     <div className={`glass-card p-6 relative transition-all ${
       isPopular
         ? 'border-2 border-purple-500/50 shadow-primary-glow md:-mt-4 md:mb-4'
-        : 'border border-border hover:border-border-light'
+        : 'border border-crisp hover:border-crisp-light'
     }`}>
       {isPopular && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-full text-xs font-medium whitespace-nowrap">
@@ -30,13 +30,13 @@ export function PricingCard({
       )}
 
       <h3 className="text-2xl font-bold text-foreground mb-2">{name}</h3>
-      <p className="text-foreground-muted text-sm mb-6">{description}</p>
+      <p className="text-muted text-sm mb-6">{description}</p>
 
       <div className="mb-6">
         <span className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-400">
           {price}
         </span>
-        {priceSubtext && <span className="text-foreground-muted">{priceSubtext}</span>}
+        {priceSubtext && <span className="text-muted">{priceSubtext}</span>}
       </div>
 
       <ul className="space-y-3 mb-8">

@@ -11,7 +11,7 @@ export function FeatureCard({ icon, title, description }: FeatureCardProps) {
         {icon}
       </div>
       <h3 className="text-xl font-semibold text-foreground mb-3">{title}</h3>
-      <p className="text-foreground-muted leading-relaxed">{description}</p>
+      <p className="text-muted leading-relaxed">{description}</p>
     </div>
   )
 }

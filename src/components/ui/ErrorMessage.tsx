@@ -23,7 +23,7 @@ export function ErrorMessage({
       border: 'border-error/30',
       icon: 'text-error',
       title: 'text-foreground',
-      text: 'text-foreground-muted',
+      text: 'text-muted',
       button: 'btn-primary'
     },
     warning: {
@@ -31,7 +31,7 @@ export function ErrorMessage({
       border: 'border-warning/30',
       icon: 'text-warning',
       title: 'text-foreground',
-      text: 'text-foreground-muted',
+      text: 'text-muted',
       button: 'btn-primary'
     },
     info: {
@@ -39,7 +39,7 @@ export function ErrorMessage({
       border: 'border-info/30',
       icon: 'text-info',
       title: 'text-foreground',
-      text: 'text-foreground-muted',
+      text: 'text-muted',
       button: 'btn-primary'
     }
   };

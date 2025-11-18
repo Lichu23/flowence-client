@@ -28,11 +28,11 @@ export function Card({
 
   const baseClasses = variant === 'glass'
     ? 'glass-card'
-    : 'bg-card border border-border rounded-2xl shadow-lg-ambient shadow-lg-direct transition-all hover:bg-card-hover hover:border-border-light hover:shadow-xl-ambient hover:shadow-xl-direct';
+    : 'card';
 
   return (
     <div
-      className={`${baseClasses} ${paddingClasses[padding]} ${!hover && variant === 'glass' ? '[&:hover]:bg-card [&:hover]:border-border [&:hover]:shadow-lg-ambient [&:hover]:shadow-lg-direct' : ''} ${className}`}
+      className={`${baseClasses} ${paddingClasses[padding]} ${hover && variant === 'glass' ? 'glass-card-hover' : ''} ${className}`}
     >
       {children}
     </div>
@@ -54,7 +54,7 @@ export function CardHeader({ title, subtitle, action, className = '' }: CardHead
           {title}
         </h3>
         {subtitle && (
-          <p className="text-sm text-foreground-muted mt-1">{subtitle}</p>
+          <p className="text-sm text-muted mt-1">{subtitle}</p>
         )}
       </div>
       {action && (
@@ -73,7 +73,7 @@ interface CardFooterProps {
 
 export function CardFooter({ children, className = '' }: CardFooterProps) {
   return (
-    <div className={`mt-4 pt-4 border-t border-border ${className}`}>
+    <div className={`mt-4 pt-4 border-t border-crisp ${className}`}>
       {children}
     </div>
   );

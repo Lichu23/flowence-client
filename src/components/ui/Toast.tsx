@@ -132,7 +132,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
 
   return (
     <div
-      className={`${style.bg} backdrop-blur-md border ${style.border} rounded-xl p-4 shadow-xl-ambient shadow-xl-direct animate-slide-up flex items-start gap-3`}
+      className={`${style.bg} backdrop-blur-md border ${style.border} rounded-xl p-4 shadow-xl animate-slide-up flex items-start gap-3`}
       role="alert"
     >
       <svg className={`w-5 h-5 ${style.icon} flex-shrink-0 mt-0.5`} fill="none" stroke="currentColor" viewBox="0 0 24 24">

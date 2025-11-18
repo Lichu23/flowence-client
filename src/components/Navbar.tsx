@@ -51,7 +51,7 @@ export function Navbar() {
   ];
 
   return (
-    <header className="bg-card/50 backdrop-blur-lg shadow-md-ambient shadow-md-direct border-b border-border sticky top-0 z-50">
+    <header className="bg-card/50 backdrop-blur-lg shadow-md border-b border-crisp sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Desktop and Mobile Top Bar */}
         <div className="flex justify-between items-center py-3 sm:py-4">
@@ -73,8 +73,8 @@ export function Navbar() {
                     href={link.href}
                     className={`font-medium transition-all px-3 py-2 rounded-lg hover-contrast ${
                       pathname === link.href
-                        ? "text-primary font-semibold bg-primary/10 border border-primary/20"
-                        : "text-foreground-muted hover:text-foreground hover:bg-card"
+                        ? "text-purple-400 font-semibold bg-purple-600/10 border border-purple-500/20"
+                        : "text-muted hover:text-foreground hover:bg-glass-5"
                     }`}
                     onClick={(e) => {
                       if (pathname === link.href) {
@@ -88,7 +88,7 @@ export function Navbar() {
             )}
 
             {/* User Info */}
-            <div className="text-sm text-foreground-muted border-l border-border pl-4 hidden lg:block">
+            <div className="text-sm text-muted border-l border-crisp pl-4 hidden lg:block">
               {user?.name}
             </div>
 
@@ -126,7 +126,7 @@ export function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-card/80 backdrop-blur-lg animate-slide-up">
+        <div className="md:hidden border-t border-crisp bg-card/80 backdrop-blur-lg animate-slide-up">
           <nav className="px-3 py-3 space-y-1">
             {/* Navigation Links */}
             {navLinks.map(
@@ -137,8 +137,8 @@ export function Navbar() {
                     href={link.href}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all hover-contrast ${
                       pathname === link.href
-                        ? "text-primary font-semibold bg-primary/10 border border-primary/20"
-                        : "text-foreground-muted hover:bg-card hover:text-foreground"
+                        ? "text-purple-400 font-semibold bg-purple-600/10 border border-purple-500/20"
+                        : "text-muted hover:bg-glass-5 hover:text-foreground"
                     }`}
                     onClick={(e) => {
                       if (pathname === link.href) {
@@ -154,7 +154,7 @@ export function Navbar() {
             )}
 
             {/* User Info */}
-            <div className="px-4 py-3 border-t border-border mt-2">
+            <div className="px-4 py-3 border-t border-crisp mt-2">
               <div className="text-sm font-medium text-foreground">
                 {user?.name}
               </div>
