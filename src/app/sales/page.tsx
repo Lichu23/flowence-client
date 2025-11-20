@@ -191,7 +191,7 @@ function SalesContent() {
                 />
                 <button
                   onClick={handleSearch}
-                  className="btn-primary px-4 py-2 text-sm whitespace-nowrap"
+                  className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all whitespace-nowrap"
                 >
                   Buscar
                 </button>
@@ -462,7 +462,7 @@ function SalesContent() {
                             toast.error("Error al descargar recibo");
                           }
                         }}
-                        className="btn-secondary flex-1 px-3 py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors active:scale-95"
+                        className="btn-secondary flex-1 px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm font-medium text-primary hover:text-primary/80 transition-colors active:scale-95"
                       >
                         Descargar PDF
                       </button>
@@ -487,14 +487,14 @@ function SalesContent() {
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="btn-secondary px-3 py-1.5 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="btn-secondary px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Anterior
                     </button>
                     <button
                       onClick={() => setPage((p) => Math.min(pages, p + 1))}
                       disabled={page === pages}
-                      className="btn-secondary px-3 py-1.5 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="btn-secondary px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Siguiente
                     </button>

@@ -51,7 +51,7 @@ export function Navbar() {
   ];
 
   return (
-    <header className="bg-card/50 backdrop-blur-lg shadow-md border-b border-crisp sticky top-0 z-50">
+    <header className="glass-bg-5 border-b border-crisp-light sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Desktop and Mobile Top Bar */}
         <div className="flex justify-between items-center py-3 sm:py-4">
@@ -71,10 +71,10 @@ export function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`font-medium transition-all px-3 py-2 rounded-lg hover-contrast ${
+                    className={`nav-link ${
                       pathname === link.href
-                        ? "text-purple-400 font-semibold bg-purple-600/10 border border-purple-500/20"
-                        : "text-muted hover:text-foreground hover:bg-glass-5"
+                        ? "nav-link-active"
+                        : ""
                     }`}
                     onClick={(e) => {
                       if (pathname === link.href) {
@@ -88,14 +88,14 @@ export function Navbar() {
             )}
 
             {/* User Info */}
-            <div className="text-sm text-muted border-l border-crisp pl-4 hidden lg:block">
+            <div className="text-sm text-apca-muted border-l border-crisp-light pl-4 hidden lg:block">
               {user?.name}
             </div>
 
             {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="btn-secondary text-sm text-error hover:border-error/50"
+              className="btn-secondary px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm text-error hover:border-error/50"
             >
               Cerrar Sesión
             </button>
@@ -105,28 +105,26 @@ export function Navbar() {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg hover:bg-card hover-contrast active-contrast focus-contrast transition-all flex-shrink-0"
+              className="p-2 rounded-lg hover-contrast active-contrast focus-contrast flex-shrink-0"
               aria-label="Alternar menú"
             >
               {mobileMenuOpen ? (
-                <svg className="w-6 h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-apca-pass" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <svg className="w-6 h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-apca-pass" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
             </button>
           </div>
         </div>
-
-        {/* Mobile Store Selector removed (now inline with hamburger) */}
       </div>
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-crisp bg-card/80 backdrop-blur-lg animate-slide-up">
+        <div className="md:hidden border-t border-crisp-light glass-bg-10 animate-slide-up">
           <nav className="px-3 py-3 space-y-1">
             {/* Navigation Links */}
             {navLinks.map(
@@ -135,10 +133,10 @@ export function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all hover-contrast ${
+                    className={`nav-link text-icon-pair-md ${
                       pathname === link.href
-                        ? "text-purple-400 font-semibold bg-purple-600/10 border border-purple-500/20"
-                        : "text-muted hover:bg-glass-5 hover:text-foreground"
+                        ? "nav-link-active"
+                        : ""
                     }`}
                     onClick={(e) => {
                       if (pathname === link.href) {
@@ -154,8 +152,8 @@ export function Navbar() {
             )}
 
             {/* User Info */}
-            <div className="px-4 py-3 border-t border-crisp mt-2">
-              <div className="text-sm font-medium text-foreground">
+            <div className="px-4 py-3 border-t border-crisp-light mt-2">
+              <div className="text-sm font-medium text-apca-pass">
                 {user?.name}
               </div>
             </div>
@@ -166,10 +164,10 @@ export function Navbar() {
                 handleLogout();
                 setMobileMenuOpen(false);
               }}
-              className="w-full btn-secondary text-base text-error hover:border-error/50 flex items-center justify-center gap-2"
+              className="w-full btn-secondary px-3 py-2 md:px-4 md:py-2 text-sm md:text-base text-error hover:border-error/50 text-icon-pair-md justify-center"
             >
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4 md:w-5 md:h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

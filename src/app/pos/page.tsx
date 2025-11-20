@@ -214,10 +214,6 @@ function POSContent() {
             Caja - {currentStore.name}
           </h1>
         </div>
-        <p className="text-xs sm:text-sm text-foreground-subtle mb-4 sm:mb-6 truncate">
-          Usuario: {user.name} (
-          {user.role === "owner" ? "Propietario" : "Empleado"})
-        </p>
 
         <div className="glass-card p-3 sm:p-4">
           <div className="mb-4 flex flex-col sm:flex-row gap-2">
@@ -231,7 +227,7 @@ function POSContent() {
               <button
                 onClick={addBySearch}
                 disabled={adding || !search.trim()}
-                className="btn-primary flex-1 sm:flex-initial disabled:opacity-50 text-sm sm:text-base whitespace-nowrap"
+                className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all flex-1 sm:flex-initial disabled:opacity-50 whitespace-nowrap"
               >
                 {adding ? "Agregando..." : "Agregar"}
               </button>
@@ -239,12 +235,8 @@ function POSContent() {
           </div>
 
           {/* Inline Scanner in Cart */}
-          <div className="mt-4 p-4 glass-card">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-foreground">
-                Escanear producto
-              </h3>
-            </div>
+          <>
+            
             <div className="scanner-inline">
               <ScanditBarcodeScanner
                 onScanSuccess={handleBarcodeScan}
@@ -283,7 +275,7 @@ function POSContent() {
                 {scannerError}
               </div>
             )}
-          </div>
+          </>
 
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-foreground">Carrito Temporal</h2>
@@ -347,7 +339,7 @@ function POSContent() {
             <button
               onClick={handleCheckout}
               disabled={items.length === 0 || loading}
-              className="btn-primary w-full sm:w-auto disabled:opacity-50 text-sm sm:text-base whitespace-nowrap"
+              className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all w-full sm:w-auto disabled:opacity-50 whitespace-nowrap"
             >
               {loading ? "Validando..." : "Cobrar"}
             </button>
@@ -490,14 +482,14 @@ function POSContent() {
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={() => setShowPayment(false)}
-                  className="btn-secondary px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base"
+                  className="btn-secondary px-3 py-2 md:px-4 md:py-2 text-sm md:text-base"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={processPayment}
                   disabled={loading || items.length === 0}
-                  className="btn-primary px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base disabled:opacity-50"
+                  className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
                 >
                   {loading ? "Procesando..." : "Confirmar"}
                 </button>
@@ -508,7 +500,7 @@ function POSContent() {
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={() => setShowPayment(false)}
-                  className="btn-secondary px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base"
+                  className="btn-secondary px-3 py-2 md:px-4 md:py-2 text-sm md:text-base"
                 >
                   Cancelar
                 </button>
@@ -519,7 +511,7 @@ function POSContent() {
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={() => setShowPayment(false)}
-                  className="btn-secondary px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base"
+                  className="btn-secondary px-3 py-2 md:px-4 md:py-2 text-sm md:text-base"
                 >
                   Cancelar
                 </button>

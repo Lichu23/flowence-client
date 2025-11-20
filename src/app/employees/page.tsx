@@ -157,10 +157,10 @@ function EmployeesContent() {
           {user?.role === "owner" && (
             <button
               onClick={() => setShowInviteForm(true)}
-              className="btn-primary w-full sm:w-auto px-4 py-2.5 sm:py-2 flex items-center justify-center gap-2 active:scale-95"
+              className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
             >
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4 md:w-5 md:h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

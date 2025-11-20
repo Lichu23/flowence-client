@@ -366,12 +366,12 @@ function ProductsContent() {
           {user?.role === 'owner' && (
             <button
               onClick={() => setShowCreateForm(true)}
-              className="btn-primary w-full sm:w-auto px-4 py-2.5 sm:py-2 flex items-center justify-center gap-2 active:scale-95"
+              className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              <span className="text-sm sm:text-base">Agregar Producto</span>
+              <span>Agregar Producto</span>
             </button>
           )}
         </div>
@@ -508,7 +508,7 @@ function ProductsContent() {
                   {user?.role === 'owner' && (
                     <button
                       onClick={() => setShowCreateForm(true)}
-                      className="btn-primary px-4 py-2 text-sm sm:text-base"
+                      className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all"
                     >
                       Crear Primer Producto
                     </button>
@@ -672,13 +672,13 @@ function ProductsContent() {
                           <>
                             <button
                               onClick={() => handleEdit(product)}
-                              className="btn-secondary flex-1 px-3 py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors active:scale-95"
+                              className="btn-secondary flex-1 px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm font-medium text-primary hover:text-primary/80 transition-colors active:scale-95"
                             >
                               Editar
                             </button>
                             <button
                               onClick={() => handleDelete(product.id, product.name)}
-                              className="btn-secondary flex-1 px-3 py-2 text-xs font-medium text-error hover:text-error/80 transition-colors active:scale-95"
+                              className="btn-secondary flex-1 px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm font-medium text-error hover:text-error/80 transition-colors active:scale-95"
                             >
                               Eliminar
                             </button>
@@ -686,7 +686,7 @@ function ProductsContent() {
                         ) : (
                           <button
                             onClick={() => handleEmployeeEdit(product)}
-                            className="btn-secondary w-full px-3 py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors active:scale-95"
+                            className="btn-secondary w-full px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm font-medium text-primary hover:text-primary/80 transition-colors active:scale-95"
                             title="Editar stock de venta"
                           >
                             Editar Stock de Venta
@@ -708,14 +708,14 @@ function ProductsContent() {
                     <button
                       onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
-                      className="btn-secondary px-3 py-1.5 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="btn-secondary px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Anterior
                     </button>
                     <button
                       onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                       disabled={currentPage === totalPages}
-                      className="btn-secondary px-3 py-1.5 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="btn-secondary px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Siguiente
                     </button>
@@ -1060,14 +1060,14 @@ function ProductsContent() {
                       setEditingProduct(null);
                       resetForm();
                     }}
-                    className="btn-secondary flex-1 px-4 py-2.5 sm:py-2 text-sm sm:text-base active:scale-95"
+                    className="btn-secondary flex-1 px-3 py-2 md:px-4 md:py-2 text-sm md:text-base active:scale-95"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={formLoading}
-                    className="btn-primary flex-1 px-4 py-2.5 sm:py-2 text-sm sm:text-base disabled:opacity-50 active:scale-95"
+                    className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all flex-1 disabled:opacity-50"
                   >
                     {formLoading ? 'Guardando...' : (editingProduct ? 'Actualizar' : 'Crear Producto')}
                   </button>

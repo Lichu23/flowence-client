@@ -169,9 +169,9 @@ function DashboardContent() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setShowMonthlyView(!showMonthlyView)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        showMonthlyView 
-                          ? 'btn-primary' 
+                      className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-medium transition-colors ${
+                        showMonthlyView
+                          ? 'text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:scale-105 active:scale-95'
                           : 'btn-secondary'
                       }`}
                     >

@@ -113,12 +113,12 @@ function StoresContent() {
           {user?.role === 'owner' && (
             <button
               onClick={() => setShowCreateForm(true)}
-              className="btn-primary w-full sm:w-auto px-4 py-2.5 sm:py-2 flex items-center justify-center gap-2 active:scale-95"
+              className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              <span className="text-sm sm:text-base">Agregar Tienda</span>
+              <span>Agregar Tienda</span>
             </button>
           )}
         </div>
@@ -203,14 +203,14 @@ function StoresContent() {
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
-                    className="btn-secondary flex-1 px-4 py-2.5 sm:py-2 text-sm sm:text-base active:scale-95"
+                    className="btn-secondary flex-1 px-3 py-2 md:px-4 md:py-2 text-sm md:text-base active:scale-95"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="btn-primary flex-1 px-4 py-2.5 sm:py-2 text-sm sm:text-base disabled:opacity-50 active:scale-95"
+                    className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all flex-1 disabled:opacity-50"
                   >
                     {loading ? 'Creando...' : 'Crear Tienda'}
                   </button>
@@ -300,14 +300,14 @@ function StoresContent() {
                   <button
                     type="button"
                     onClick={() => setEditingStore(null)}
-                    className="btn-secondary flex-1 px-4 py-2.5 sm:py-2 text-sm sm:text-base active:scale-95"
+                    className="btn-secondary flex-1 px-3 py-2 md:px-4 md:py-2 text-sm md:text-base active:scale-95"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="btn-primary flex-1 px-4 py-2.5 sm:py-2 text-sm sm:text-base disabled:opacity-50 active:scale-95"
+                    className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all flex-1 disabled:opacity-50"
                   >
                     {loading ? 'Actualizando...' : 'Actualizar Tienda'}
                   </button>
@@ -362,7 +362,7 @@ function StoresContent() {
               <div className="flex flex-col gap-2 mt-3 sm:mt-4">
                 <Link
                   href="/dashboard"
-                  className="btn-primary w-full px-3 sm:px-4 py-2 sm:py-2.5 text-center text-sm sm:text-base active:scale-95"
+                  className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all w-full text-center"
                 >
                   Ver Dashboard
                 </Link>
@@ -371,7 +371,7 @@ function StoresContent() {
                   <>
                     <Link
                       href={`/stores/${store.id}/settings`}
-                      className="btn-secondary w-full px-3 sm:px-4 py-2 sm:py-2.5 text-center text-sm sm:text-base active:scale-95 flex items-center justify-center gap-2"
+                      className="btn-secondary w-full px-3 py-2 md:px-4 md:py-2 text-center text-sm md:text-base active:scale-95 flex items-center justify-center gap-2"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -382,7 +382,7 @@ function StoresContent() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(store)}
-                        className="btn-secondary flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-primary hover:text-primary/80 transition-colors active:scale-95"
+                        className="btn-secondary flex-1 px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm text-primary hover:text-primary/80 transition-colors active:scale-95"
                       >
                         Editar
                       </button>
@@ -390,7 +390,7 @@ function StoresContent() {
                       {stores.length > 1 && (
                         <button
                           onClick={() => handleDelete(store.id, store.name)}
-                          className="btn-secondary flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-error hover:text-error/80 transition-colors active:scale-95"
+                          className="btn-secondary flex-1 px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm text-error hover:text-error/80 transition-colors active:scale-95"
                         >
                           Eliminar
                         </button>

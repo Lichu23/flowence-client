@@ -19,27 +19,27 @@ export function ErrorMessage({
 }: ErrorMessageProps) {
   const variantStyles = {
     error: {
-      bg: 'bg-error/10',
+      bg: 'glass-bg-5',
       border: 'border-error/30',
       icon: 'text-error',
-      title: 'text-foreground',
-      text: 'text-muted',
+      title: 'text-apca-pass',
+      text: 'text-apca-muted',
       button: 'btn-primary'
     },
     warning: {
-      bg: 'bg-warning/10',
+      bg: 'glass-bg-5',
       border: 'border-warning/30',
       icon: 'text-warning',
-      title: 'text-foreground',
-      text: 'text-muted',
+      title: 'text-apca-pass',
+      text: 'text-apca-muted',
       button: 'btn-primary'
     },
     info: {
-      bg: 'bg-info/10',
+      bg: 'glass-bg-5',
       border: 'border-info/30',
       icon: 'text-info',
-      title: 'text-foreground',
-      text: 'text-muted',
+      title: 'text-apca-pass',
+      text: 'text-apca-muted',
       button: 'btn-primary'
     }
   };
@@ -47,8 +47,8 @@ export function ErrorMessage({
   const styles = variantStyles[variant];
 
   return (
-    <div className={`${styles.bg} backdrop-blur-sm border ${styles.border} rounded-xl p-4 ${className}`}>
-      <div className="flex items-start gap-3">
+    <div className={`${styles.bg} border ${styles.border} rounded-xl p-4 ${className}`}>
+      <div className="text-icon-pair-sm items-start">
         <svg
           className={`w-5 h-5 ${styles.icon} flex-shrink-0 mt-0.5`}
           fill="none"
