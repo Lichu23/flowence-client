@@ -152,7 +152,7 @@ export default function StoreSettingsPage() {
           <p className="text-error">Store not found</p>
           <button
             onClick={() => router.push("/stores")}
-            className="btn-primary mt-4 px-4 py-2"
+            className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all mt-4"
           >
             Back to Stores
           </button>
@@ -170,7 +170,7 @@ export default function StoreSettingsPage() {
           <p className="text-error">Only store owners can access settings</p>
           <button
             onClick={() => router.push("/stores")}
-            className="btn-primary mt-4 px-4 py-2"
+            className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all mt-4"
           >
             Back to Stores
           </button>
@@ -427,14 +427,14 @@ export default function StoreSettingsPage() {
               <button
                 type="button"
                 onClick={() => router.push("/stores")}
-                className="btn-secondary px-6 py-2"
+                className="btn-secondary px-3 py-2 md:px-6 md:py-2 text-sm md:text-base"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={saving}
-                className="btn-primary px-6 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? "Saving..." : "Save Settings"}
               </button>
@@ -476,13 +476,13 @@ export default function StoreSettingsPage() {
             <div className="flex justify-end space-x-3">
               <button
                 onClick={cancelCurrencyChange}
-                className="btn-secondary px-4 py-2"
+                className="btn-secondary px-3 py-2 md:px-4 md:py-2 text-sm md:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmCurrencyChange}
-                className="btn-primary px-4 py-2 bg-warning hover:bg-warning/80"
+                className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-warning rounded-lg md:rounded-xl shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
               >
                 Confirm Currency Change
               </button>

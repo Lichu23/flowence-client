@@ -113,7 +113,7 @@ function AcceptInvitationContent() {
           <p className="text-foreground-muted mb-6">{error || 'Esta invitación ha expirado o no es válida'}</p>
           <Link
             href="/login"
-            className="btn-primary inline-block px-6 py-3"
+            className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all inline-block"
           >
             Ir al Login
           </Link>
@@ -202,7 +202,7 @@ function AcceptInvitationContent() {
           <button
             type="submit"
             disabled={loading}
-            className="btn-primary w-full py-3 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all w-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Creando cuenta...' : 'Crear Cuenta y Aceptar'}
           </button>

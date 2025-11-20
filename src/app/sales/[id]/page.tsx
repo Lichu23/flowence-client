@@ -244,12 +244,12 @@ function SaleDetailsContent() {
 
         <div className="flex flex-wrap gap-2 justify-end mt-3">
           <button
-            className="btn-secondary px-4 py-2 disabled:opacity-50"
+            className="btn-secondary px-3 py-2 md:px-4 md:py-2 text-sm md:text-base disabled:opacity-50"
             onClick={() => router.back()}
             disabled={saving}
           >Cancelar</button>
           <button
-            className="btn-primary px-4 py-2 bg-error hover:bg-error/80 disabled:opacity-50"
+            className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-error rounded-lg md:rounded-xl shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
             disabled={saving || !rows.some(r => r.summary.remaining_quantity > 0)}
             onClick={async () => {
               if (!currentStore || !saleId) return;
@@ -286,7 +286,7 @@ function SaleDetailsContent() {
             }}
           >Devolver todo</button>
           <button
-            className="btn-primary px-4 py-2 disabled:opacity-50"
+            className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-lg md:rounded-xl shadow-purple hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
             disabled={saving || !rows.some(r => selected[r.item.id] && (quantities[r.item.id] ?? 0) > 0)}
             onClick={async () => {
               if (!currentStore || !saleId) return;

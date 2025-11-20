@@ -289,67 +289,35 @@ export default function ScanditBarcodeScanner({
     };
   }, [onScanSuccess, onError, licenseKey]);
 
-  // Style for the scanner container to maintain consistent dimensions
-  const scannerContainerStyle = {
-    width: "100%",
-    height: "300px", // Fixed height for the scanner
-    position: "relative" as const,
-    overflow: "hidden",
-    borderRadius: "8px",
-    border: "1px solid #e2e8f0",
-    backgroundColor: "#f5f5f5",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#666",
-    fontSize: "1rem",
-  };
-
   return (
-    <div style={scannerContainerStyle}>
-      <div
-        className="scandit-barcode-scanner"
-        ref={containerRef}
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "relative",
-          backgroundColor: noCameraAvailable ? "#f5f5f5" : "#000",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: noCameraAvailable ? "#666" : "#fff",
-        }}
-      >
-        {noCameraAvailable ? (
-          <div style={{ textAlign: "center", padding: "1rem" }}>
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-              📷
-            </div>
-            <div style={{ fontWeight: 500 }}>
-              No hay cámara disponible
-            </div>
-            <div
-              style={{
-                fontSize: "0.8rem",
-                marginTop: "0.5rem",
-                opacity: 0.7,
-              }}
-            >
-              Este dispositivo no tiene cámara o el acceso fue denegado
-            </div>
+    <div
+      className={`scandit-barcode-scanner w-full h-48 sm:h-52 md:h-56 lg:h-60 xl:h-64 relative flex items-center justify-center ${
+        noCameraAvailable
+          ? "bg-gray-100 text-gray-600"
+          : "bg-black text-white"
+      }`}
+      ref={containerRef}
+    >
+      {noCameraAvailable ? (
+        <div className="text-center p-4">
+          <div className="text-2xl sm:text-3xl mb-2">📷</div>
+          <div className="font-medium text-sm sm:text-base">
+            No hay cámara disponible
           </div>
-        ) : (
-          <div style={{ textAlign: "center", padding: "1rem" }}>
-            <div>Escaneando códigos de barras...</div>
-            <div
-              style={{ fontSize: "0.8rem", marginTop: "0.5rem", opacity: 0.7 }}
-            >
-              Apunta la cámara al código de barras
-            </div>
+          <div className="text-xs sm:text-sm mt-2 opacity-70">
+            Este dispositivo no tiene cámara o el acceso fue denegado
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="text-center p-4">
+          <div className="text-sm sm:text-base">
+            Escaneando códigos de barras...
+          </div>
+          <div className="text-xs sm:text-sm mt-2 opacity-70">
+            Apunta la cámara al código de barras
+          </div>
+        </div>
+      )}
     </div>
   );
 }
