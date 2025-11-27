@@ -1,15 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigation } from "@/components/landing/Navigation";
 import { HeroSection } from "@/components/landing/HeroSection";
-import { AppMockup } from "@/components/landing/AppMockup";
-import { FeatureCard } from "@/components/landing/FeatureCard";
-import { StepsSection } from "@/components/landing/StepsSection";
-import { PricingCard } from "@/components/landing/PricingCard";
-import { Footer } from "@/components/landing/Footer";
+
+// PERFORMANCE: Code split below-the-fold components to reduce initial bundle size
+// These components are not visible until user scrolls, so lazy loading improves LCP
+const AppMockup = lazy(() => import("@/components/landing/AppMockup").then(m => ({ default: m.AppMockup })));
+const FeatureCard = lazy(() => import("@/components/landing/FeatureCard").then(m => ({ default: m.FeatureCard })));
+const StepsSection = lazy(() => import("@/components/landing/StepsSection").then(m => ({ default: m.StepsSection })));
+const PricingCard = lazy(() => import("@/components/landing/PricingCard").then(m => ({ default: m.PricingCard })));
+const Footer = lazy(() => import("@/components/landing/Footer").then(m => ({ default: m.Footer })));
+
+// PERFORMANCE: Defer loading heavy constants until needed
 import { features, pricingPlans } from "../../constants/landingpage";
 
 export default function Home() {
@@ -43,7 +48,10 @@ export default function Home() {
 
       <HeroSection />
 
-      <AppMockup />
+      {/* PERFORMANCE: Wrap lazy-loaded components in Suspense with minimal fallback */}
+      <Suspense fallback={<div className="h-96" />}>
+        <AppMockup />
+      </Suspense>
 
       {/* Features Section */}
       <section
@@ -61,15 +69,19 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, index) => (
-              <FeatureCard key={index} {...feature} />
-            ))}
-          </div>
+          <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><div className="h-48 skeleton" /><div className="h-48 skeleton" /><div className="h-48 skeleton" /></div>}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {features.map((feature, index) => (
+                <FeatureCard key={index} {...feature} />
+              ))}
+            </div>
+          </Suspense>
         </div>
       </section>
 
-      <StepsSection />
+      <Suspense fallback={<div className="h-96" />}>
+        <StepsSection />
+      </Suspense>
 
       {/* Pricing Section */}
       <section
@@ -86,15 +98,19 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-6xl mx-auto">
-            {pricingPlans.map((plan, index) => (
-              <PricingCard key={index} {...plan} />
-            ))}
-          </div>
+          <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-6xl mx-auto"><div className="h-96 skeleton" /><div className="h-96 skeleton" /><div className="h-96 skeleton" /></div>}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-6xl mx-auto">
+              {pricingPlans.map((plan, index) => (
+                <PricingCard key={index} {...plan} />
+              ))}
+            </div>
+          </Suspense>
         </div>
       </section>
 
-      <Footer />
+      <Suspense fallback={<div className="h-64" />}>
+        <Footer />
+      </Suspense>
     </div>
   );
 }

@@ -35,35 +35,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (savedToken && savedUser) {
         setToken(savedToken);
         setUser(JSON.parse(savedUser));
-        
-        // Verify token is still valid
-        try {
-          const freshUser = await authApi.me();
-          setUser(freshUser);
-          localStorage.setItem('user', JSON.stringify(freshUser));
-        } catch (error) {
-          console.error('Token verification failed:', error);
-          
-          // Only logout if it's an authentication error, not a network error
-          if (error instanceof Error && (
-            error.message.includes('Network error') ||
-            error.message.includes('No internet connection') ||
-            error.message.includes('Connection timeout') ||
-            error.message.includes('Unable to connect to server')
-          )) {
-            console.log('Network error during token verification, keeping user logged in');
-            // Don't logout on network errors, just keep the existing user data
-          } else {
-            console.log('Authentication error, logging out');
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            setToken(null);
-            setUser(null);
-          }
-        }
-      }
 
-      setLoading(false);
+        // PERFORMANCE: Defer token verification to not block initial render
+        // Set loading to false immediately for faster LCP
+        setLoading(false);
+
+        // Verify token is still valid (async, non-blocking)
+        setTimeout(async () => {
+          try {
+            const freshUser = await authApi.me();
+            setUser(freshUser);
+            localStorage.setItem('user', JSON.stringify(freshUser));
+          } catch (error) {
+            console.error('Token verification failed:', error);
+
+            // Only logout if it's an authentication error, not a network error
+            if (error instanceof Error && (
+              error.message.includes('Network error') ||
+              error.message.includes('No internet connection') ||
+              error.message.includes('Connection timeout') ||
+              error.message.includes('Unable to connect to server')
+            )) {
+              console.log('Network error during token verification, keeping user logged in');
+              // Don't logout on network errors, just keep the existing user data
+            } else {
+              console.log('Authentication error, logging out');
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              setToken(null);
+              setUser(null);
+            }
+          }
+        }, 100); // Defer by 100ms to unblock initial render
+      } else {
+        setLoading(false);
+      }
     };
 
     initAuth();
