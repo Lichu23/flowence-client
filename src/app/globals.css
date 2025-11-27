@@ -365,6 +365,38 @@ body {
   cursor: not-allowed;
 }
 
+/* GUIDELINE: Select dropdown styling for dark theme */
+.input-field select,
+select.input-field {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25rem 1.25rem;
+  padding-right: 2.5rem;
+  appearance: none;
+}
+
+/* GUIDELINE: Dropdown options styling - dark background with light text */
+.input-field option,
+select.input-field option {
+  background-color: #1a1a2e;
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+}
+
+.input-field option:hover,
+select.input-field option:hover {
+  background-color: rgba(147, 51, 234, 0.2);
+  color: #ffffff;
+}
+
+.input-field option:checked,
+select.input-field option:checked {
+  background-color: rgba(147, 51, 234, 0.3);
+  color: #ffffff;
+  font-weight: 500;
+}
+
 .input-field-error {
   background-color: var(--color-glass-5);
   backdrop-filter: blur(var(--backdrop-blur-sm));
