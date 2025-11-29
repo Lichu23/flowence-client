@@ -77,7 +77,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
+    <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid flex items-center justify-center p-4">
       <div className="max-w-md w-full glass-card p-8">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
@@ -86,19 +86,23 @@ export default function RegisterPage() {
         </div>
 
         {/* Register Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-apca-pass mb-2">
               Tu Nombre
             </label>
             <input
               id="name"
+              name="name"
               type="text"
+              autoComplete="name"
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="input-field"
-              placeholder="Juan Pérez"
+              placeholder="Juan Pérez…"
+              aria-invalid={error ? 'true' : 'false'}
+              aria-describedby={error ? 'register-error' : undefined}
             />
           </div>
 
@@ -108,12 +112,16 @@ export default function RegisterPage() {
             </label>
             <input
               id="email"
+              name="email"
               type="email"
+              autoComplete="email"
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="input-field"
-              placeholder="tu@ejemplo.com"
+              placeholder="tu@ejemplo.com…"
+              aria-invalid={error ? 'true' : 'false'}
+              aria-describedby={error ? 'register-error' : undefined}
             />
           </div>
 
@@ -123,14 +131,18 @@ export default function RegisterPage() {
             </label>
             <input
               id="password"
+              name="password"
               type="password"
+              autoComplete="new-password"
               required
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className="input-field"
               placeholder="••••••••"
+              aria-invalid={error ? 'true' : 'false'}
+              aria-describedby="password-hint register-error"
             />
-            <p className="text-xs text-apca-subtle mt-1">
+            <p id="password-hint" className="text-xs text-apca-subtle mt-1">
               Debe tener al menos 8 caracteres con mayúscula, minúscula, número y carácter especial
             </p>
           </div>
@@ -141,14 +153,17 @@ export default function RegisterPage() {
             </label>
             <input
               id="store_name"
+              name="store_name"
               type="text"
+              autoComplete="organization"
               required
               value={formData.store_name}
               onChange={(e) => setFormData({ ...formData, store_name: e.target.value })}
               className="input-field"
-              placeholder="Mi Tienda"
+              placeholder="Mi Tienda…"
+              aria-describedby="store-name-hint"
             />
-            <p className="text-xs text-apca-subtle mt-1">
+            <p id="store-name-hint" className="text-xs text-apca-subtle mt-1">
               Tu primera tienda se creará automáticamente
             </p>
           </div>
@@ -159,11 +174,13 @@ export default function RegisterPage() {
             </label>
             <input
               id="store_address"
+              name="store_address"
               type="text"
+              autoComplete="street-address"
               value={formData.store_address}
               onChange={(e) => setFormData({ ...formData, store_address: e.target.value })}
               className="input-field"
-              placeholder="123 Calle Principal, Ciudad, Estado CP"
+              placeholder="123 Calle Principal, Ciudad…"
             />
           </div>
 
@@ -173,18 +190,32 @@ export default function RegisterPage() {
             </label>
             <input
               id="store_phone"
+              name="store_phone"
               type="tel"
+              autoComplete="tel"
+              inputMode="tel"
               value={formData.store_phone}
               onChange={(e) => setFormData({ ...formData, store_phone: e.target.value })}
               className="input-field"
-              placeholder="+52 (555) 123-4567"
+              placeholder="+52 (555) 123-4567…"
             />
           </div>
 
           {error && (
-            <div className="glass-bg-5 border border-error/30 text-apca-pass px-4 py-3 rounded-xl">
+            <div
+              id="register-error"
+              className="glass-bg-5 border border-error/30 text-apca-pass px-4 py-3 rounded-xl"
+              role="alert"
+              aria-live="assertive"
+            >
               <div className="text-icon-pair-sm">
-                <svg className="w-5 h-5 text-error flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5 text-error flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className="text-sm">{error}</span>
@@ -196,8 +227,20 @@ export default function RegisterPage() {
             type="submit"
             disabled={loading}
             className="w-full btn-primary"
+            aria-busy={loading}
           >
-            {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
+            {loading && (
+              <svg
+                className="animate-spin h-5 w-5 mr-2 inline-block"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            )}
+            {loading ? 'Creando cuenta…' : 'Crear Cuenta'}
           </button>
         </form>
 

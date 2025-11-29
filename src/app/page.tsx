@@ -1,10 +1,6 @@
-"use client";
 
-import { useEffect, lazy, Suspense } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
-import { Navigation } from "@/components/landing/Navigation";
 import { HeroSection } from "@/components/landing/HeroSection";
+import { lazy, Suspense } from "react";
 
 // PERFORMANCE: Code split below-the-fold components to reduce initial bundle size
 // These components are not visible until user scrolls, so lazy loading improves LCP
@@ -12,40 +8,13 @@ const AppMockup = lazy(() => import("@/components/landing/AppMockup").then(m => 
 const FeatureCard = lazy(() => import("@/components/landing/FeatureCard").then(m => ({ default: m.FeatureCard })));
 const StepsSection = lazy(() => import("@/components/landing/StepsSection").then(m => ({ default: m.StepsSection })));
 const PricingCard = lazy(() => import("@/components/landing/PricingCard").then(m => ({ default: m.PricingCard })));
-const Footer = lazy(() => import("@/components/landing/Footer").then(m => ({ default: m.Footer })));
 
 // PERFORMANCE: Defer loading heavy constants until needed
 import { features, pricingPlans } from "../../constants/landingpage";
 
 export default function Home() {
-  const router = useRouter();
-  const { isAuthenticated, loading } = useAuth();
-
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
-      router.push("/dashboard");
-    }
-  }, [isAuthenticated, loading, router]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-foreground-muted">Cargando...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isAuthenticated) {
-    return null;
-  }
-
   return (
     <div className="min-h-screen bg-background text-foreground relative bg-grid">
-      <Navigation />
-
       <HeroSection />
 
       {/* PERFORMANCE: Wrap lazy-loaded components in Suspense with minimal fallback */}
@@ -107,10 +76,6 @@ export default function Home() {
           </Suspense>
         </div>
       </section>
-
-      <Suspense fallback={<div className="h-64" />}>
-        <Footer />
-      </Suspense>
     </div>
   );
 }

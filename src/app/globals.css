@@ -132,10 +132,174 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* =================================================================
+   ACCESSIBILITY FOUNDATION STYLES
+   ================================================================= */
+
+/* GUIDELINE: Touch targets - Prevent double-tap zoom on interactive elements */
+button,
+[role="button"],
+a,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(147, 51, 234, 0.1);
+}
+
+/* GUIDELINE: Minimum touch targets (44px mobile, 24px desktop) */
+button,
+[role="button"],
+a[href],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+@media (max-width: 768px) {
+  button,
+  [role="button"],
+  a[href],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"] {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* GUIDELINE: Skip to content link for screen readers */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 9999;
+  padding: 1rem 1.5rem;
+  background-color: var(--color-purple-600);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  box-shadow: var(--shadow-purple-lg);
+}
+
+.skip-to-content:focus {
+  left: 1rem;
+  top: 1rem;
+  outline: 3px solid var(--color-purple-400);
+  outline-offset: 2px;
+}
+
+/* GUIDELINE: Scroll margin for anchor navigation */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* GUIDELINE: Focus-visible styles for keyboard navigation */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-purple-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Ensure focus-within is visible for composite widgets */
+[role="group"]:focus-within,
+[role="radiogroup"]:focus-within,
+fieldset:focus-within {
+  outline: 2px solid rgba(147, 51, 234, 0.3);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/* GUIDELINE: Tabular numbers for price/number displays */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Apply to common number contexts */
+[data-number],
+.price,
+.stat,
+.counter,
+time[datetime] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* GUIDELINE: Safe areas for mobile devices */
+@supports (padding: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* GUIDELINE: Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep essential transforms but without animation */
+  button:active,
+  [role="button"]:active {
+    transition: none;
+  }
+}
+
+/* GUIDELINE: Mobile input font size - prevent iOS zoom */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* GUIDELINE: Prevent text selection during drag operations */
+[draggable="true"] {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* GUIDELINE: Inert elements during modal/overlay states */
+[inert],
+[inert] * {
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.5;
+}
+
+/* =================================================================
+   BASE STYLES
+   ================================================================= */
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Ensure main content is identifiable for skip-to-content */
+main {
+  scroll-margin-top: 5rem;
 }
 
 /* GUIDELINE: Balance contrast in lockups - Buttons */

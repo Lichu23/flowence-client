@@ -1,7 +1,6 @@
 "use client";
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { Navbar } from "@/components/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useStore } from "@/contexts/StoreContext";
 import { useEffect, useMemo, useState } from "react";
@@ -110,8 +109,7 @@ function SaleDetailsContent() {
   if (!user || !currentStore) return null;
 
   return (
-    <div className="min-h-screen bg-background bg-grid">
-      <Navbar />
+    <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid">
       <main className="max-w-5xl mx-auto p-4">
         <div className="flex items-center justify-between mb-3">
           <h1 className="text-2xl font-bold text-foreground">Venta {sale?.receipt_number}</h1>

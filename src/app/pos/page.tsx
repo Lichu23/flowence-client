@@ -1,6 +1,5 @@
 "use client";
 
-import { Navbar } from "@/components/Navbar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -197,8 +196,7 @@ function POSContent() {
   if (!user || !currentStore) return null;
 
   return (
-    <div className="min-h-screen bg-background bg-grid">
-      <Navbar />
+    <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid">
       <main className="max-w-5xl mx-auto p-3 sm:p-4">
         <div className="flex items-center gap-2 mb-2">
           {settingsStore?.logo_url && (
@@ -215,13 +213,13 @@ function POSContent() {
           </h1>
         </div>
 
-        <div className="glass-card p-3 sm:p-4">
+        <div className="glass-card p-3 sm:p-4 flex flex-col gap-5">
           <div className="mb-4 flex flex-col sm:flex-row gap-2">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar producto..."
-              className="input-field flex-1 text-sm sm:text-base"
+              placeholder="Agregar producto..."
+              className="input-field"
             />
             <div className="flex gap-2">
               <button
@@ -236,7 +234,6 @@ function POSContent() {
 
           {/* Inline Scanner in Cart */}
           <>
-            
             <div className="scanner-inline">
               <ScanditBarcodeScanner
                 onScanSuccess={handleBarcodeScan}
@@ -269,12 +266,12 @@ function POSContent() {
                   }
                 }}
               />
+              {scannerError && (
+                <div className="mt-2 text-xs text-error text-center">
+                  {scannerError}
+                </div>
+              )}
             </div>
-            {scannerError && (
-              <div className="mt-2 text-xs text-error text-center">
-                {scannerError}
-              </div>
-            )}
           </>
 
           <div className="flex items-center justify-between mb-4">
@@ -349,10 +346,21 @@ function POSContent() {
 
       {/* Payment Modal */}
       {showPayment && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
-          <div className="glass-card max-w-sm sm:max-w-md w-full p-4 sm:p-6">
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="payment-modal-title"
+        >
+          <div
+            className="glass-card max-w-sm sm:max-w-md w-full p-4 sm:p-6"
+            role="document"
+          >
             <div className="flex justify-between items-center mb-3 sm:mb-4">
-              <h3 className="text-base sm:text-lg font-bold text-foreground">
+              <h3
+                id="payment-modal-title"
+                className="text-base sm:text-lg font-bold text-foreground"
+              >
                 Cobrar (
                 {paymentMethod === "cash"
                   ? "Efectivo"
@@ -363,9 +371,11 @@ function POSContent() {
               </h3>
               <button
                 onClick={() => setShowPayment(false)}
-                className="text-foreground-subtle hover:text-foreground text-xl sm:text-2xl transition-colors"
+                className="text-foreground-subtle hover:text-foreground text-xl sm:text-2xl transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Cerrar modal de pago"
+                type="button"
               >
-                ✕
+                <span aria-hidden="true">✕</span>
               </button>
             </div>
             <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
@@ -382,52 +392,69 @@ function POSContent() {
                 <span>{formatCurrency(total)}</span>
               </div>
             </div>
-            <div className="mb-3">
-              <label className="block text-xs sm:text-sm font-medium text-foreground mb-1">
+            <fieldset className="mb-3">
+              <legend className="block text-xs sm:text-sm font-medium text-foreground mb-1">
                 Método de pago
-              </label>
-              <div className="flex gap-3">
-                <label className="flex items-center gap-2 text-sm">
+              </legend>
+              <div
+                className="flex gap-3"
+                role="radiogroup"
+                aria-label="Seleccionar método de pago"
+              >
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
                   <input
                     type="radio"
                     name="paymethod"
+                    value="cash"
                     checked={paymentMethod === "cash"}
                     onChange={() => setPaymentMethod("cash")}
+                    className="cursor-pointer"
                   />{" "}
                   Efectivo
                 </label>
-                <label className="flex items-center gap-2 text-sm">
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
                   <input
                     type="radio"
                     name="paymethod"
+                    value="card"
                     checked={paymentMethod === "card"}
                     onChange={() => setPaymentMethod("card")}
+                    className="cursor-pointer"
                   />{" "}
                   Tarjeta
                 </label>
-                <label className="flex items-center gap-2 text-sm">
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
                   <input
                     type="radio"
                     name="paymethod"
+                    value="qr"
                     checked={paymentMethod === "qr"}
                     onChange={() => setPaymentMethod("qr")}
+                    className="cursor-pointer"
                   />{" "}
                   QR
                 </label>
               </div>
-            </div>
+            </fieldset>
             {paymentMethod === "cash" && (
               <div className="mb-3 sm:mb-4">
-                <label className="block text-xs sm:text-sm font-medium text-foreground mb-1 sm:mb-1.5">
+                <label
+                  htmlFor="cash-amount"
+                  className="block text-xs sm:text-sm font-medium text-foreground mb-1 sm:mb-1.5"
+                >
                   Monto recibido
                 </label>
                 <input
+                  id="cash-amount"
+                  name="cash-amount"
                   type="number"
+                  inputMode="decimal"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="input-field w-full text-base sm:text-lg"
-                  placeholder="0.00"
+                  className="input-field w-full text-base sm:text-lg tabular-nums"
+                  placeholder="0.00…"
                   step="0.01"
+                  autoComplete="off"
                 />
                 {amount && parseFloat(amount) > 0 && (
                   <div className="mt-2 sm:mt-3 p-2.5 sm:p-3 glass-card rounded-lg">

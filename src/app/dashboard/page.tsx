@@ -5,7 +5,6 @@
  */
 
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { Navbar } from '@/components/Navbar';
 import { useStore } from '@/contexts/StoreContext';
 import { dashboardApi } from '@/lib/api';
 import { DashboardStats } from '@/types';
@@ -57,10 +56,7 @@ function DashboardContent() {
   }, [currentStore]);
 
   return (
-    <div className="min-h-screen bg-background bg-grid">
-      {/* Header */}
-      <Navbar />
-
+    <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid">
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Multi-Store Overview (shown when user has multiple stores and main stats are loaded) */}
