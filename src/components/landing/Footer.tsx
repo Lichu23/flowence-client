@@ -1,6 +1,18 @@
+'use client';
+
+import { useAuth } from '@/contexts/AuthContext';
+
 export function Footer() {
+  const { isAuthenticated } = useAuth();
+
+  // Don't show footer on authenticated pages
+  if (isAuthenticated) {
+    return null;
+  }
+
+  // Show footer on landing page
   return (
-    <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-crisp">
+    <footer id="ayuda" className="py-12 px-4 sm:px-6 lg:px-8 border-t border-crisp">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
@@ -45,5 +57,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

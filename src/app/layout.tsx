@@ -6,6 +6,8 @@ import { CartProvider } from "@/contexts/CartContext";
 import { StripeProvider } from "@/components/common/StripeProvider";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { ToastProvider } from "@/components/ui/Toast";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/landing/Footer";
 
 export const metadata: Metadata = {
   title: "Flowence - Multi-Store Management",
@@ -35,7 +37,9 @@ export default function RootLayout({
               <SettingsProvider>
                 <CartProvider>
                   <StripeProvider>
+                    <Navbar />
                     {children}
+                    <Footer />
                   </StripeProvider>
                 </CartProvider>
               </SettingsProvider>

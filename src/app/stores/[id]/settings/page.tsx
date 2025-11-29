@@ -136,7 +136,7 @@ export default function StoreSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background bg-grid flex items-center justify-center">
+      <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-foreground-muted">Loading store settings...</p>
@@ -147,7 +147,7 @@ export default function StoreSettingsPage() {
 
   if (!store) {
     return (
-      <div className="min-h-screen bg-background bg-grid flex items-center justify-center">
+      <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid flex items-center justify-center">
         <div className="text-center">
           <p className="text-error">Store not found</p>
           <button
@@ -165,7 +165,7 @@ export default function StoreSettingsPage() {
   const isOwner = user?.stores.find((s) => s.id === storeId)?.role === "owner";
   if (!isOwner) {
     return (
-      <div className="min-h-screen bg-background bg-grid flex items-center justify-center">
+      <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid flex items-center justify-center">
         <div className="text-center">
           <p className="text-error">Only store owners can access settings</p>
           <button
@@ -180,7 +180,7 @@ export default function StoreSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background bg-grid py-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-6">

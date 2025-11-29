@@ -93,7 +93,7 @@ function AcceptInvitationContent() {
 
   if (validating) {
     return (
-      <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
+      <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid flex items-center justify-center p-4">
         <div className="max-w-md w-full glass-card p-8 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="text-foreground-muted mt-4">Validando invitación...</p>
@@ -104,7 +104,7 @@ function AcceptInvitationContent() {
 
   if (!validation || !validation.valid) {
     return (
-      <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
+      <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid flex items-center justify-center p-4">
         <div className="max-w-md w-full glass-card p-8 text-center">
           <svg className="w-16 h-16 text-error mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -123,7 +123,7 @@ function AcceptInvitationContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
+    <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid flex items-center justify-center p-4">
       <div className="max-w-md w-full glass-card p-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -225,7 +225,7 @@ function AcceptInvitationContent() {
 export default function AcceptInvitationPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-background bg-grid flex items-center justify-center p-4">
+      <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid flex items-center justify-center p-4">
         <div className="max-w-md w-full glass-card p-8 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="text-foreground-muted mt-4">Cargando...</p>

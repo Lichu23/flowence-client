@@ -130,21 +130,33 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
 
   const style = styles[toast.type];
 
+  // GUIDELINE: Use polite aria-live for non-critical notifications, assertive for errors
+  const ariaLive = toast.type === 'error' ? 'assertive' : 'polite';
+
   return (
     <div
       className={`${style.bg} backdrop-blur-md border ${style.border} rounded-xl p-4 shadow-xl animate-slide-up flex items-start gap-3`}
       role="alert"
+      aria-live={ariaLive}
+      aria-atomic="true"
     >
-      <svg className={`w-5 h-5 ${style.icon} flex-shrink-0 mt-0.5`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg
+        className={`w-5 h-5 ${style.icon} flex-shrink-0 mt-0.5`}
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
         {icons[toast.type]}
       </svg>
       <p className={`text-sm ${style.text} flex-1`}>{toast.message}</p>
       <button
         onClick={() => onRemove(toast.id)}
-        className={`${style.icon} hover-contrast active-contrast focus-contrast flex-shrink-0`}
-        aria-label="Cerrar"
+        className={`${style.icon} hover-contrast active-contrast focus-contrast flex-shrink-0 min-w-[24px] min-h-[24px] flex items-center justify-center`}
+        aria-label="Cerrar notificación"
+        type="button"
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>

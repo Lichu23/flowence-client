@@ -6,7 +6,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { Navbar } from "@/components/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useStore } from "@/contexts/StoreContext";
 import { invitationApi } from "@/lib/api";
@@ -132,7 +131,7 @@ function EmployeesContent() {
 
   if (!currentStore) {
     return (
-      <div className="min-h-screen bg-background bg-grid flex items-center justify-center">
+      <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid flex items-center justify-center">
         <div className="text-center">
           <p className="text-foreground-muted">
             Selecciona una tienda para gestionar empleados
@@ -143,10 +142,7 @@ function EmployeesContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background bg-grid">
-      {/* Header */}
-      <Navbar />
-
+    <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid">
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
