@@ -115,12 +115,36 @@ export async function apiRequest<T>(
   try {
     const fullUrl = `${API_URL}${endpoint}`;
 
+    // Log request details for sales endpoints
+    if (endpoint.includes('/sales')) {
+      console.log('[API CLIENT] Making request to sales endpoint');
+      console.log('[API CLIENT] Endpoint:', endpoint);
+      console.log('[API CLIENT] Full URL:', fullUrl);
+      console.log('[API CLIENT] Method:', options.method || 'GET');
+      console.log('[API CLIENT] Headers:', headers);
+      console.log('[API CLIENT] Body:', options.body);
+      console.log('[API CLIENT] Is retry?', isRetry);
+    }
+
     const response = await fetch(fullUrl, {
       ...options,
       headers,
     });
 
+    // Log response details for sales endpoints
+    if (endpoint.includes('/sales')) {
+      console.log('[API CLIENT] Response received');
+      console.log('[API CLIENT] Status:', response.status);
+      console.log('[API CLIENT] Status Text:', response.statusText);
+      console.log('[API CLIENT] Headers:', Object.fromEntries(response.headers.entries()));
+    }
+
     const data: ApiResponse<T> = await response.json();
+
+    // Log parsed response data for sales endpoints
+    if (endpoint.includes('/sales')) {
+      console.log('[API CLIENT] Parsed response data:', JSON.stringify(data, null, 2));
+    }
 
     // Handle 401 Unauthorized - try to refresh token
     if (response.status === 401 && !isRetry && !endpoint.includes("/auth/")) {
