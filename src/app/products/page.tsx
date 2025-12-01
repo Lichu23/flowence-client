@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,13 +23,25 @@ function ProductsContent() {
   const { user } = useAuth();
   const { currentStore } = useStore();
   const { formatCurrency } = useSettings();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const productListRef = useRef<HTMLDivElement>(null);
+
+  // Track re-renders for performance debugging
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  console.log(`[PRODUCTS PAGE] 🔄 Component render #${renderCount.current}`);
+
+  // Get page from URL, default to 1
+  const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
 
   // State management
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(pageFromUrl);
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
   const [stats, setStats] = useState({
     total_products: 0,
     total_value: 0,
@@ -49,110 +62,183 @@ function ProductsContent() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  // Load products
-  const loadProducts = useCallback(async () => {
+  // Sync URL with current page
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (currentPage === 1) {
+      params.delete('page');
+    } else {
+      params.set('page', currentPage.toString());
+    }
+    const newUrl = params.toString() ? `?${params.toString()}` : '';
+    router.replace(`/products${newUrl}`, { scroll: false });
+  }, [currentPage, router, searchParams]);
+
+  // Load categories once on mount
+  useEffect(() => {
     if (!currentStore) return;
 
-    try {
-      setLoading(true);
-
-      const result = await productApi.getAll(currentStore.id, {
-        search: debouncedSearch || undefined,
-        is_active: showActive,
-        low_stock: showLowStock,
-        category: selectedCategory || undefined,
-        page: currentPage,
-        limit: 20,
-        sort_by: 'created_at',
-        sort_order: 'desc',
-      });
-
-      setProducts(result.products || []);
-      setTotalProducts(result.pagination?.total || 0);
-
-      // Extract unique categories
-      if (result.products) {
-        const uniqueCategories = Array.from(
-          new Set(
-            result.products
-              .map(product => product.category)
-              .filter(Boolean) as string[]
-          )
-        );
-        setCategories(uniqueCategories);
+    const loadCategories = async () => {
+      try {
+        const cats = await productApi.getCategories(currentStore.id);
+        setCategories(cats);
+      } catch (error) {
+        console.error('Failed to load categories:', error);
       }
+    };
 
-      setTotalPages(result.pagination?.pages || 0);
-      setStats(result.stats || {
-        total_products: 0,
-        total_value: 0,
-        low_stock_count: 0,
-        out_of_stock_count: 0,
-        categories_count: 0,
-      });
-    } catch (error) {
-      console.error('Failed to load products:', error);
-      setProducts([]);
-      setTotalProducts(0);
-      setTotalPages(0);
-      setStats({
-        total_products: 0,
-        total_value: 0,
-        low_stock_count: 0,
-        out_of_stock_count: 0,
-        categories_count: 0,
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [currentStore, debouncedSearch, showActive, showLowStock, selectedCategory, currentPage]);
-
-  const loadCategories = useCallback(async () => {
-    if (!currentStore) return;
-
-    try {
-      const cats = await productApi.getCategories(currentStore.id);
-      setCategories(cats);
-    } catch (error) {
-      console.error('Failed to load categories:', error);
-    }
+    loadCategories();
   }, [currentStore]);
 
+  // Load products with AbortController to prevent race conditions
   useEffect(() => {
-    if (currentStore) {
-      loadProducts();
-      loadCategories();
+    if (!currentStore) return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    const loadProducts = async () => {
+      const pageStartTime = performance.now();
+      console.log('[PRODUCTS PAGE] 🚀 Starting product fetch...');
+
+      try {
+        // Set loading immediately to show spinner ASAP
+        setLoading(true);
+        const setLoadingTime = performance.now();
+        console.log(`[PRODUCTS PAGE] ⏱️ setLoading(true) took: ${(setLoadingTime - pageStartTime).toFixed(2)}ms`);
+        console.log('[PRODUCTS PAGE] ⚠️ Backend response taking >500ms - backend optimization needed!');
+
+        const apiCallStartTime = performance.now();
+        const result = await productApi.getAll(
+          currentStore.id,
+          {
+            search: debouncedSearch || undefined,
+            is_active: showActive,
+            low_stock: showLowStock,
+            category: selectedCategory || undefined,
+            page: currentPage,
+            limit: 10,
+            sort_by: 'created_at',
+            sort_order: 'desc',
+          },
+          { signal } // Pass AbortSignal to cancel stale requests
+        );
+        const apiCallEndTime = performance.now();
+        console.log(`[PRODUCTS PAGE] ⏱️ API call completed in: ${(apiCallEndTime - apiCallStartTime).toFixed(2)}ms`);
+
+        // Only update state if request wasn't aborted
+        if (!signal.aborted) {
+          const stateUpdateStartTime = performance.now();
+          setProducts(result.products || []);
+          setTotalProducts(result.pagination?.total || 0);
+          setTotalPages(result.pagination?.pages || 0);
+          setStats(result.stats || {
+            total_products: 0,
+            total_value: 0,
+            low_stock_count: 0,
+            out_of_stock_count: 0,
+            categories_count: 0,
+          });
+          const stateUpdateEndTime = performance.now();
+          console.log(`[PRODUCTS PAGE] ⏱️ State updates took: ${(stateUpdateEndTime - stateUpdateStartTime).toFixed(2)}ms`);
+          console.log(`[PRODUCTS PAGE] ✅ Total page load time: ${(stateUpdateEndTime - pageStartTime).toFixed(2)}ms`);
+        }
+      } catch (error) {
+        // Ignore abort errors (normal when filters change rapidly)
+        if (error instanceof Error && error.name === 'AbortError') {
+          return;
+        }
+
+        // Only update error state if request wasn't aborted
+        if (!signal.aborted) {
+          console.error('Failed to load products:', error);
+          setProducts([]);
+          setTotalProducts(0);
+          setTotalPages(0);
+          setStats({
+            total_products: 0,
+            total_value: 0,
+            low_stock_count: 0,
+            out_of_stock_count: 0,
+            categories_count: 0,
+          });
+        }
+      } finally {
+        if (!signal.aborted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadProducts();
+
+    // Cleanup: abort request if dependencies change before completion
+    return () => {
+      controller.abort();
+    };
+  }, [currentStore, currentPage, debouncedSearch, selectedCategory, showActive, showLowStock, refetchTrigger]);
+
+  // Handlers - memoized to prevent unnecessary re-renders
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of product list smoothly
+    if (productListRef.current) {
+      productListRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
     }
-  }, [currentStore, currentPage, debouncedSearch, selectedCategory, showActive, showLowStock, loadProducts, loadCategories]);
+  }, []);
 
-  // Handlers
-  const handleEdit = (product: Product) => {
+  const handleEdit = useCallback((product: Product) => {
     setEditingProduct(product);
-  };
+  }, []);
 
-  const handleDelete = async (id: string, name: string) => {
+  const handleDelete = useCallback(async (id: string, name: string) => {
     if (!currentStore) return;
     if (!confirm(`¿Seguro que deseas eliminar "${name}"?`)) return;
 
     try {
       await productApi.delete(currentStore.id, id);
-      loadProducts();
+      // Trigger refetch by incrementing counter
+      setRefetchTrigger(prev => prev + 1);
     } catch (error) {
       console.error('Failed to delete product:', error);
     }
-  };
+  }, [currentStore]);
 
   const handleFormSuccess = async () => {
-    await loadProducts();
-    await loadCategories();
+    // Reload categories in case a new one was added
+    if (currentStore) {
+      try {
+        const cats = await productApi.getCategories(currentStore.id);
+        setCategories(cats);
+      } catch (error) {
+        console.error('Failed to reload categories:', error);
+      }
+    }
+
+    // Trigger refetch by incrementing counter
+    setRefetchTrigger(prev => prev + 1);
     setShowCreateForm(false);
     setEditingProduct(null);
   };
 
-  const handleCloseForm = () => {
+  const handleCloseForm = useCallback(() => {
     setShowCreateForm(false);
     setEditingProduct(null);
-  };
+  }, []);
+
+  const handleCreateClick = useCallback(() => {
+    setShowCreateForm(true);
+  }, []);
+
+  // Memoize filters object to prevent unnecessary re-renders
+  const filters = useMemo(() => ({
+    showLowStock,
+    searchTerm: debouncedSearch,
+    category: selectedCategory,
+  }), [showLowStock, debouncedSearch, selectedCategory]);
 
   if (!currentStore) {
     return (
@@ -206,7 +292,7 @@ function ProductsContent() {
         />
 
         {/* Products List */}
-        <div className="glass-card">
+        <div className="glass-card" ref={productListRef}>
           <ProductList
             products={products}
             loading={loading}
@@ -214,12 +300,8 @@ function ProductsContent() {
             formatCurrency={formatCurrency}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            filters={{
-              showLowStock,
-              searchTerm: debouncedSearch,
-              category: selectedCategory,
-            }}
-            onCreateClick={() => setShowCreateForm(true)}
+            filters={filters}
+            onCreateClick={handleCreateClick}
           />
 
           {/* Pagination */}
@@ -227,7 +309,8 @@ function ProductsContent() {
             currentPage={currentPage}
             totalPages={totalPages}
             totalProducts={totalProducts}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
+            loading={loading}
           />
         </div>
 

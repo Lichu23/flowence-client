@@ -23,7 +23,8 @@ import {
 export const productApi = {
   getAll: async (
     storeId: string,
-    filters?: Partial<ProductFilters>
+    filters?: Partial<ProductFilters>,
+    options?: RequestInit
   ): Promise<ProductListResponse> => {
     const queryParams = new URLSearchParams();
 
@@ -44,7 +45,7 @@ export const productApi = {
       queryString ? `?${queryString}` : ""
     }`;
 
-    const response = await apiRequest<ProductListResponse>(url);
+    const response = await apiRequest<ProductListResponse>(url, options);
     return response.data!;
   },
 

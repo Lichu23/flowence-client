@@ -1,6 +1,6 @@
 // src/app/products/components/ProductList.tsx
 
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import type { Product, User } from '@/types';
 import { ProductTable } from './ProductTable';
 import { ProductCard } from './ProductCard';
@@ -21,7 +21,7 @@ interface ProductListProps {
   onCreateClick: () => void;
 }
 
-export const ProductList: FC<ProductListProps> = ({
+const ProductListComponent: FC<ProductListProps> = ({
   products,
   loading,
   user,
@@ -82,3 +82,6 @@ export const ProductList: FC<ProductListProps> = ({
     </>
   );
 };
+
+// Memoize component to prevent unnecessary re-renders
+export const ProductList = memo(ProductListComponent);
