@@ -115,31 +115,51 @@ export async function apiRequest<T>(
   try {
     const fullUrl = `${API_URL}${endpoint}`;
 
-    // Log request details for sales endpoints
-    if (endpoint.includes('/sales')) {
-      console.log('[API CLIENT] Making request to sales endpoint');
+    // Performance monitoring for products endpoint
+    const isProductsEndpoint = endpoint.includes('/products');
+    const startTime = isProductsEndpoint ? performance.now() : 0;
+
+    // Log request details for sales and products endpoints
+    if (endpoint.includes('/sales') || isProductsEndpoint) {
+      console.log(`[API CLIENT] Making request to ${isProductsEndpoint ? 'products' : 'sales'} endpoint`);
       console.log('[API CLIENT] Endpoint:', endpoint);
       console.log('[API CLIENT] Full URL:', fullUrl);
       console.log('[API CLIENT] Method:', options.method || 'GET');
-      console.log('[API CLIENT] Headers:', headers);
-      console.log('[API CLIENT] Body:', options.body);
-      console.log('[API CLIENT] Is retry?', isRetry);
+      if (isProductsEndpoint) {
+        console.log('[API CLIENT] ⏱️ Request started at:', new Date().toISOString());
+      }
     }
 
+    const fetchStartTime = isProductsEndpoint ? performance.now() : 0;
     const response = await fetch(fullUrl, {
       ...options,
       headers,
     });
+    const fetchEndTime = isProductsEndpoint ? performance.now() : 0;
 
-    // Log response details for sales endpoints
-    if (endpoint.includes('/sales')) {
-      console.log('[API CLIENT] Response received');
-      console.log('[API CLIENT] Status:', response.status);
-      console.log('[API CLIENT] Status Text:', response.statusText);
-      console.log('[API CLIENT] Headers:', Object.fromEntries(response.headers.entries()));
+    if (isProductsEndpoint) {
+      console.log(`[API CLIENT] ⏱️ Network request took: ${(fetchEndTime - fetchStartTime).toFixed(2)}ms`);
     }
 
+    // Log response details for sales and products endpoints
+    if (endpoint.includes('/sales') || isProductsEndpoint) {
+      console.log('[API CLIENT] Response received');
+      console.log('[API CLIENT] Status:', response.status);
+      if (isProductsEndpoint) {
+        console.log('[API CLIENT] Response size:', response.headers.get('content-length'), 'bytes');
+      }
+    }
+
+    const parseStartTime = isProductsEndpoint ? performance.now() : 0;
     const data: ApiResponse<T> = await response.json();
+    const parseEndTime = isProductsEndpoint ? performance.now() : 0;
+
+    if (isProductsEndpoint) {
+      console.log(`[API CLIENT] ⏱️ JSON parsing took: ${(parseEndTime - parseStartTime).toFixed(2)}ms`);
+      console.log(`[API CLIENT] ⏱️ Total request time: ${(parseEndTime - startTime).toFixed(2)}ms`);
+      const productData = data.data as { products?: unknown[] };
+      console.log('[API CLIENT] Products received:', productData?.products?.length || 0);
+    }
 
     // Log parsed response data for sales endpoints
     if (endpoint.includes('/sales')) {
@@ -198,6 +218,13 @@ export async function apiRequest<T>(
 
     return data;
   } catch (err) {
+    // Check if it's an intentional abort (don't log or transform these)
+    const errorObj = err as Error & { name?: string };
+    if (errorObj?.name === "AbortError") {
+      // Re-throw as-is without logging - this is intentional cancellation
+      throw err;
+    }
+
     // Narrow error type for safe access to message/name
     console.error("API Request Error:", err);
 
@@ -214,15 +241,13 @@ export async function apiRequest<T>(
       );
     }
 
-    // Check if it's a timeout or connection error
-    const errorObj = err as Error & { name?: string };
+    // Check if it's a timeout or connection error (not AbortError)
     if (
-      errorObj?.name === "AbortError" ||
-      (typeof errorObj?.message === "string" &&
-        (errorObj.message.includes("timeout") ||
-          errorObj.message.includes("Connection failed") ||
-          errorObj.message.includes("ERR_NETWORK") ||
-          errorObj.message.includes("ERR_INTERNET_DISCONNECTED")))
+      typeof errorObj?.message === "string" &&
+      (errorObj.message.includes("timeout") ||
+        errorObj.message.includes("Connection failed") ||
+        errorObj.message.includes("ERR_NETWORK") ||
+        errorObj.message.includes("ERR_INTERNET_DISCONNECTED"))
     ) {
       throw new Error(
         "Connection timeout. Please check your internet connection and try again."
