@@ -319,7 +319,7 @@ function SaleDetailsContent() {
                 setSaving(false);
               }
             }}
-          >{saving ? "Procesando..." : "Confirmar devoluciones seleccionadas"}</button>
+          >{saving ? "Procesando..." : "Confirmar devoluciones"}</button>
         </div>
       </main>
 

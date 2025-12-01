@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function HeroSection() {
   return (
     <section className="pt-5 lg:pt-10 pb-20 px-4 sm:px-6 lg:px-8">
@@ -6,22 +8,40 @@ export function HeroSection() {
           PLATAFORMA POS Y GESTIÓN
         </div>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-foreground">
-          Empieza a vender<br />en <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-400">minutos</span>
+          Empieza a vender
+          <br />
+          en{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-400">
+            minutos
+          </span>
         </h1>
         <p className="text-lg text-muted max-w-3xl mx-auto mb-10 leading-relaxed">
-          Flowence permite que cualquier supermercado o almacén empiece a vender, controlar inventario y gestionar su negocio en minutos, sin equipos costosos, sin instalaciones complejas y sin fricción.
+          Flowence permite que cualquier supermercado o almacén empiece a
+          vender, controlar inventario y gestionar su negocio en minutos, sin
+          equipos costosos, sin instalaciones complejas y sin fricción.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-          <button className="btn-primary w-full sm:w-auto px-6 py-3">
-            Ver demostración
-          </button>
-          <button className="btn-secondary w-full sm:w-auto px-6 py-3 flex items-center justify-center gap-2">
+          <Link href="/register" className="btn-primary px-4 py-2 text-sm">
+            Prueba gratis
+          </Link>
+
+          <Link href="#precios" className="btn-secondary w-full sm:w-auto px-6 py-3 flex items-center justify-center gap-2">
             Solicitar cotización
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
-          </button>
+          </Link >
         </div>
 
         <p className="text-sm text-subtle">
@@ -29,5 +49,5 @@ export function HeroSection() {
         </p>
       </div>
     </section>
-  )
+  );
 }
