@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from "react";
 interface ScanditBarcodeScannerProps {
   onScanSuccess: (barcode: string) => void;
   onError?: (error: Error) => void;
+  isActive: boolean;
 }
 
 type DataCaptureViewType =
@@ -27,6 +28,7 @@ type DataCaptureViewType =
 export default function ScanditBarcodeScanner({
   onScanSuccess,
   onError,
+  isActive,
 }: ScanditBarcodeScannerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<DataCaptureViewType | null>(null);
@@ -52,7 +54,7 @@ export default function ScanditBarcodeScanner({
   const contextRef = useRef<DataCaptureContext | null>(null);
   const isMountedRef = useRef(true);
 
-  // Effect to handle scanner initialization and cleanup
+  // Effect to handle scanner state based on isActive
   useEffect(() => {
     if (!barcodeCaptureRef.current || !contextRef.current) return;
 
@@ -71,14 +73,23 @@ export default function ScanditBarcodeScanner({
           view.setContext(contextRef.current!);
         }
 
-        // Enable barcode capture and camera
-        await barcodeCapture.setEnabled(true);
-        if (camera) {
-          await camera.switchToDesiredState(FrameSourceState.On);
+        // Enable or disable based on isActive state
+        if (isActive) {
+          await barcodeCapture.setEnabled(true);
+          if (camera) {
+            await camera.switchToDesiredState(FrameSourceState.On);
+          }
+        } else {
+          await barcodeCapture.setEnabled(false);
+          if (camera) {
+            await camera.switchToDesiredState(FrameSourceState.Off);
+          }
         }
       } catch (error) {
         console.error("Error setting up scanner:", error);
-        onError?.(new Error("Failed to set up scanner"));
+        if (isActive) {
+          onError?.(new Error("Failed to set up scanner"));
+        }
       }
     };
 
@@ -98,10 +109,15 @@ export default function ScanditBarcodeScanner({
       };
       cleanup();
     };
-  }, [onError]);
+  }, [isActive, onError]);
 
   useEffect(() => {
     isMountedRef.current = true;
+
+    // Only initialize when isActive is true
+    if (!isActive) {
+      return;
+    }
 
     // Prevent multiple initialization attempts
     if (initializationAttemptedRef.current) {
@@ -287,7 +303,7 @@ export default function ScanditBarcodeScanner({
       // Execute the cleanup
       cleanup().catch(console.error);
     };
-  }, [onScanSuccess, onError, licenseKey]);
+  }, [isActive, onScanSuccess, onError, licenseKey]);
 
   return (
     <div
