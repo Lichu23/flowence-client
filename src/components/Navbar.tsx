@@ -51,19 +51,19 @@ export function Navbar() {
       scrollYRef.current = window.scrollY;
 
       // Lock body scroll
-      document.body.style.position = 'fixed';
+      document.body.style.position = "fixed";
       document.body.style.top = `-${scrollYRef.current}px`;
-      document.body.style.left = '0';
-      document.body.style.right = '0';
-      document.body.style.overflow = 'hidden';
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.overflow = "hidden";
 
       return () => {
         // Restore body scroll
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.left = '';
-        document.body.style.right = '';
-        document.body.style.overflow = '';
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.overflow = "";
 
         // Restore scroll position
         window.scrollTo(0, scrollYRef.current);
@@ -77,22 +77,24 @@ export function Navbar() {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // ESC to close
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         setMobileMenuOpen(false);
         hamburgerButtonRef.current?.focus();
         return;
       }
 
       // Tab trap logic
-      if (e.key === 'Tab') {
+      if (e.key === "Tab") {
         const focusableElements = menuRef.current?.querySelectorAll(
-          'a[href], button:not([disabled])'
+          "a[href], button:not([disabled])"
         );
 
         if (!focusableElements || focusableElements.length === 0) return;
 
         const firstElement = focusableElements[0] as HTMLElement;
-        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+        const lastElement = focusableElements[
+          focusableElements.length - 1
+        ] as HTMLElement;
 
         // Shift+Tab on first element → focus last
         if (e.shiftKey && document.activeElement === firstElement) {
@@ -107,14 +109,16 @@ export function Navbar() {
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [mobileMenuOpen]);
 
   // Focus management: focus first menu item when opened
   useEffect(() => {
     if (mobileMenuOpen && menuRef.current) {
-      const firstLink = menuRef.current.querySelector('a[href], button') as HTMLElement;
+      const firstLink = menuRef.current.querySelector(
+        "a[href], button"
+      ) as HTMLElement;
       firstLink?.focus();
     } else if (!mobileMenuOpen && hamburgerButtonRef.current) {
       // Return focus to hamburger button when menu closes
@@ -164,9 +168,9 @@ export function Navbar() {
     <header className="glass-bg-5 border-b border-crisp-light sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Desktop and Mobile Top Bar */}
-        <div className="flex items-center justify-between h-16">
-          {/* Left side - Logo/Brand or Store Selector */}
-          <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1 md:flex-initial">
+        <div className={`flex items-center h-16 ${!isAuthenticated ? 'justify-between' : 'justify-between'}`}>
+          {/* LEFT: Logo/Brand or Store Selector */}
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             {isAuthenticated ? (
               <div className="min-w-0 max-w-[200px] sm:max-w-[240px] md:max-w-none">
                 <StoreSelector />
@@ -176,17 +180,33 @@ export function Navbar() {
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                   F
                 </div>
-                <span className="font-semibold text-foreground hidden sm:inline">
+                <span className="font-semibold text-foreground text-base lg:text-lg">
                   Flowence
                 </span>
               </Link>
             )}
           </div>
 
-          {/* Desktop Navigation - Hidden on mobile */}
-          <div className="hidden md:flex items-center gap-3 lg:gap-4">
+          {/* CENTER: Navigation Links (Non-authenticated only, Desktop) */}
+          {!isAuthenticated && (
+            <nav className="hidden md:flex items-center justify-center flex-1 gap-6 lg:gap-8">
+              {landingNavLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm lg:text-base font-medium text-apca-muted hover:text-foreground hover-contrast transition-colors duration-200"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+          )}
+
+          {/* RIGHT: Auth buttons (Non-authenticated) OR App Navigation (Authenticated) */}
+          <div className="flex items-center gap-3 lg:gap-4">
             {isAuthenticated ? (
-              <>
+              // Authenticated: App navigation and logout
+              <div className="hidden md:flex items-center gap-3 lg:gap-4">
                 {/* Authenticated Navigation Links */}
                 {appNavLinks.map(
                   (link) =>
@@ -214,7 +234,7 @@ export function Navbar() {
 
                 {/* User Info */}
                 <div
-                  className="text-sm text-apca-muted border-l  pl-4 hidden lg:block"
+                  className="text-sm text-apca-muted border-l pl-4 hidden lg:block"
                   aria-label="Usuario actual"
                 >
                   {user?.name}
@@ -229,21 +249,10 @@ export function Navbar() {
                 >
                   Cerrar Sesión
                 </button>
-              </>
+              </div>
             ) : (
-              <>
-                {/* Non-authenticated Navigation Links */}
-                {landingNavLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    className="text-sm lg:text-base font-medium text-apca-muted hover:text-foreground hover-contrast transition-colors duration-200"
-                  >
-                    {link.label}
-                  </a>
-                ))}
-
-                {/* Auth CTAs */}
+              // Non-authenticated: Auth CTAs on the right
+              <div className="hidden md:flex items-center gap-3 lg:gap-4">
                 <Link
                   href="/login"
                   className="text-sm lg:text-base font-medium text-apca-muted hover:text-foreground hover-contrast transition-colors duration-200"
@@ -256,7 +265,7 @@ export function Navbar() {
                 >
                   Prueba gratis
                 </Link>
-              </>
+              </div>
             )}
           </div>
 
