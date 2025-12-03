@@ -172,9 +172,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     try {
+      console.log('[AuthContext] Refreshing user data from API...');
       const freshUser = await authApi.me();
+      console.log('[AuthContext] Fresh user received:', {
+        id: freshUser.id,
+        email: freshUser.email,
+        role: freshUser.role,
+        stores: freshUser.stores.map(s => ({ id: s.id, name: s.name, business_size: s.business_size }))
+      });
       setUser(freshUser);
       localStorage.setItem('user', JSON.stringify(freshUser));
+      console.log('[AuthContext] User data saved to localStorage');
     } catch (error) {
       console.error('Failed to refresh user:', error);
       throw error;

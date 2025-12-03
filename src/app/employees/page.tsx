@@ -6,7 +6,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { RequireBusinessSize } from "@/components/RequireBusinessSize";
 import { useAuth } from "@/contexts/AuthContext";
 import { useStore } from "@/contexts/StoreContext";
 import { invitationApi, storeApi } from "@/lib/api";
@@ -227,9 +226,7 @@ function EmployeesContent() {
 export default function EmployeesPage() {
   return (
     <ProtectedRoute allowedRoles={["owner"]} redirectTo="/pos">
-      <RequireBusinessSize>
-        <EmployeesContent />
-      </RequireBusinessSize>
+      <EmployeesContent />
     </ProtectedRoute>
   );
 }

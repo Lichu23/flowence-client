@@ -5,8 +5,9 @@
  */
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useStore } from '@/contexts/StoreContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -20,16 +21,18 @@ interface ProtectedRouteProps {
   redirectTo?: string;
 }
 
-export function ProtectedRoute({ 
-  children, 
+export function ProtectedRoute({
+  children,
   allowedRoles,
   redirectTo = '/login'
 }: ProtectedRouteProps) {
-  const { isAuthenticated, loading, user } = useAuth();
+  const { isAuthenticated, loading: authLoading, user } = useAuth();
+  const { currentStore, loading: storeLoading } = useStore();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (loading) return;
+    if (authLoading || storeLoading) return;
 
     // Redirect to login if not authenticated
     if (!isAuthenticated) {
@@ -42,11 +45,22 @@ export function ProtectedRoute({
       const hasAccess = allowedRoles.includes(user.role as 'owner' | 'employee');
       if (!hasAccess) {
         router.replace(redirectTo);
+        return;
       }
     }
-  }, [isAuthenticated, loading, user, allowedRoles, redirectTo, router]);
 
-  if (loading) {
+    // Business size validation for owners (except on onboarding pages)
+    if (user?.role === 'owner' && !pathname?.startsWith('/onboarding')) {
+      if (currentStore && !currentStore.business_size) {
+        console.log('[ProtectedRoute] 🔄 Owner needs to select business size, redirecting to onboarding');
+        router.replace('/onboarding/business-size');
+        return;
+      }
+    }
+  }, [isAuthenticated, authLoading, storeLoading, user, currentStore, allowedRoles, redirectTo, pathname, router]);
+
+  // Show loading state while checking authentication and store
+  if (authLoading || storeLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
@@ -65,6 +79,13 @@ export function ProtectedRoute({
   if (allowedRoles && user) {
     const hasAccess = allowedRoles.includes(user.role as 'owner' | 'employee');
     if (!hasAccess) {
+      return null;
+    }
+  }
+
+  // Don't render if owner needs to complete business size onboarding
+  if (user?.role === 'owner' && !pathname?.startsWith('/onboarding')) {
+    if (currentStore && !currentStore.business_size) {
       return null;
     }
   }

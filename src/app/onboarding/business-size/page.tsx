@@ -17,7 +17,7 @@ import { Store, Building2, ArrowRight } from 'lucide-react';
 
 export default function BusinessSizePage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { currentStore, refreshStores } = useStore();
   const [loading, setLoading] = useState(false);
   const [selectedSize, setSelectedSize] = useState<'small' | 'medium_large' | null>(null);
@@ -49,6 +49,9 @@ export default function BusinessSizePage() {
       console.log('[BusinessSizePage] 📞 Calling setBusinessSize API...');
       const result = await storeApi.setBusinessSize(currentStore.id, size);
       console.log('[BusinessSizePage] ✅ API call successful:', result);
+
+      console.log('[BusinessSizePage] 🔄 Refreshing user data...');
+      await refreshUser();
 
       console.log('[BusinessSizePage] 🔄 Refreshing stores...');
       await refreshStores();
