@@ -26,6 +26,18 @@ export interface UserWithStores extends User {
   stores: StoreListItem[];
 }
 
+// Employee Types
+export interface Employee {
+  id: string;
+  user_id: string;
+  store_id: string;
+  name: string;
+  email: string;
+  role: "employee";
+  joined_at: string; // When they accepted the invitation
+  status: "active";
+}
+
 // Store Types
 export interface Store {
   id: string;
