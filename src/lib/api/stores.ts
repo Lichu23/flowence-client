@@ -53,4 +53,27 @@ export const storeApi = {
     const response = await apiRequest<StoreStats>(`/api/stores/${id}/stats`);
     return response.data!;
   },
+
+  setBusinessSize: async (
+    storeId: string,
+    businessSize: "small" | "medium_large"
+  ): Promise<Store> => {
+    const payload = { business_size: businessSize };
+    console.log('[setBusinessSize] 📤 Sending request:', {
+      url: `/api/stores/${storeId}/business-size`,
+      method: 'POST',
+      payload
+    });
+
+    const response = await apiRequest<Store>(
+      `/api/stores/${storeId}/business-size`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    );
+
+    console.log('[setBusinessSize] ✅ Response received:', response);
+    return response.data!;
+  },
 };

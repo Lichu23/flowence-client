@@ -6,6 +6,7 @@
  */
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RequireBusinessSize } from "@/components/RequireBusinessSize";
 import { useStore } from "@/contexts/StoreContext";
 import { useEffect, useState, useMemo } from "react";
 import { salesApi } from "@/lib/api";
@@ -19,7 +20,9 @@ import { useRouter } from "next/navigation";
 export default function SalesPage() {
   return (
     <ProtectedRoute>
-      <SalesContent />
+      <RequireBusinessSize>
+        <SalesContent />
+      </RequireBusinessSize>
     </ProtectedRoute>
   );
 }

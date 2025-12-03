@@ -19,6 +19,7 @@ export interface StoreListItem {
   phone?: string;
   role: "owner" | "employee";
   logo_url?: string;
+  business_size?: 'small' | 'medium_large' | null; // Business size selection
 }
 
 export interface UserWithStores extends User {
@@ -41,6 +42,7 @@ export interface Store {
   receipt_header?: string;
   receipt_footer?: string;
   logo_url?: string;
+  business_size?: 'small' | 'medium_large' | null; // Business size selection
   created_at: string;
   updated_at: string;
 }

@@ -9,6 +9,7 @@
 
 import { StoreSelector } from "@/components/StoreSelector";
 import { useAuth } from "@/contexts/AuthContext";
+import { useStore } from "@/contexts/StoreContext";
 import {
   LayoutDashboard,
   Package,
@@ -32,6 +33,7 @@ interface NavLink {
 
 export function Navbar() {
   const { user, logout, isAuthenticated } = useAuth();
+  const { currentStore } = useStore();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -135,18 +137,27 @@ export function Navbar() {
   ];
 
   // Authenticated navigation (app)
+  // Navigation logic:
+  // - Small business owners: Show POS, Dashboard, Products, Sales, Stores, Employees
+  // - Medium/large business owners: Show Dashboard, Products, Sales, Stores, Employees (no POS)
+  // - Employees: Show POS, Products, Sales (regardless of business size)
+  const isOwner = user?.role === "owner";
+  const isEmployee = user?.role === "employee";
+  const isSmallBusiness = currentStore?.business_size === "small";
+
   const appNavLinks: NavLink[] = [
     {
       href: "/dashboard",
       label: "Panel",
       icon: LayoutDashboard,
-      show: user?.role === "owner",
+      show: isOwner, // All owners see dashboard
     },
     {
       href: "/pos",
       label: "Caja",
       icon: ShoppingCart,
-      show: user?.role === "employee",
+      // Show POS for: employees OR small business owners
+      show: isEmployee || (isOwner && isSmallBusiness),
     },
     { href: "/products", label: "Productos", icon: Package, show: true },
     { href: "/sales", label: "Ventas", icon: Receipt, show: true },
@@ -154,13 +165,13 @@ export function Navbar() {
       href: "/stores",
       label: "Tiendas",
       icon: Store,
-      show: user?.role === "owner",
+      show: isOwner,
     },
     {
       href: "/employees",
       label: "Empleados",
       icon: Users,
-      show: user?.role === "owner",
+      show: isOwner,
     },
   ];
 

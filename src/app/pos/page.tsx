@@ -1,6 +1,7 @@
 "use client";
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RequireBusinessSize } from "@/components/RequireBusinessSize";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { CartProduct, useCart } from "@/contexts/CartContext";
@@ -309,7 +310,9 @@ function POSContent() {
 export default function POSPage() {
   return (
     <ProtectedRoute>
-      <POSContent />
+      <RequireBusinessSize>
+        <POSContent />
+      </RequireBusinessSize>
     </ProtectedRoute>
   );
 }
