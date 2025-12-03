@@ -12,6 +12,7 @@ import {
   CreateStoreData,
   UpdateStoreData,
   StoreStats,
+  Employee,
 } from "@/types";
 
 export const storeApi = {
@@ -74,6 +75,13 @@ export const storeApi = {
     );
 
     console.log('[setBusinessSize] ✅ Response received:', response);
+    return response.data!;
+  },
+
+  getEmployees: async (storeId: string): Promise<Employee[]> => {
+    const response = await apiRequest<Employee[]>(
+      `/api/stores/${storeId}/employees`
+    );
     return response.data!;
   },
 };
