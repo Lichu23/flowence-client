@@ -5,6 +5,7 @@
  */
 
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { RequireBusinessSize } from '@/components/RequireBusinessSize';
 import { useStore } from '@/contexts/StoreContext';
 import { dashboardApi } from '@/lib/api';
 import { DashboardStats } from '@/types';
@@ -432,7 +433,9 @@ function DashboardContent() {
 export default function DashboardPage() {
   return (
     <ProtectedRoute allowedRoles={['owner']} redirectTo="/pos">
-      <DashboardContent />
+      <RequireBusinessSize>
+        <DashboardContent />
+      </RequireBusinessSize>
     </ProtectedRoute>
   );
 }

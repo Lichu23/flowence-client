@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { RequireBusinessSize } from '@/components/RequireBusinessSize';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStore } from '@/contexts/StoreContext';
 import { productApi } from '@/lib/api';
@@ -335,7 +336,9 @@ function ProductsContent() {
 export default function ProductsPage() {
   return (
     <ProtectedRoute allowedRoles={['owner', 'employee']}>
-      <ProductsContent />
+      <RequireBusinessSize>
+        <ProductsContent />
+      </RequireBusinessSize>
     </ProtectedRoute>
   );
 }

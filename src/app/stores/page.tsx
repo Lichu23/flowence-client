@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { RequireBusinessSize } from '@/components/RequireBusinessSize';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStore } from '@/contexts/StoreContext';
 import { StoreListItem } from '@/types';
@@ -419,7 +420,9 @@ function StoresContent() {
 export default function StoresPage() {
   return (
     <ProtectedRoute>
-      <StoresContent />
+      <RequireBusinessSize>
+        <StoresContent />
+      </RequireBusinessSize>
     </ProtectedRoute>
   );
 }
