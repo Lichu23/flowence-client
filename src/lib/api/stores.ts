@@ -18,6 +18,8 @@ import {
 export const storeApi = {
   getAll: async (): Promise<StoreListItem[]> => {
     const response = await apiRequest<StoreListItem[]>("/api/stores");
+    console.log('[storeApi.getAll] Raw API response:', response);
+    console.log('[storeApi.getAll] Stores:', response.data);
     return response.data!;
   },
 
