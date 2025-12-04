@@ -33,7 +33,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   // Initialize stores from user data
   useEffect(() => {
     if (isAuthenticated && user) {
-      console.log('[StoreContext] Initializing stores from user data:', user.stores.map(s => ({ id: s.id, name: s.name, business_size: s.business_size })));
       setStores(user.stores);
 
       // Try to restore previous store selection
@@ -41,17 +40,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       if (savedStoreId) {
         const savedStore = user.stores.find(s => s.id === savedStoreId);
         if (savedStore) {
-          console.log('[StoreContext] Restored saved store:', { id: savedStore.id, name: savedStore.name, business_size: savedStore.business_size });
           setCurrentStore(savedStore);
         } else if (user.stores.length > 0) {
           // If saved store not found, select first one
-          console.log('[StoreContext] Saved store not found, selecting first store:', { id: user.stores[0].id, name: user.stores[0].name, business_size: user.stores[0].business_size });
           setCurrentStore(user.stores[0]);
           localStorage.setItem('currentStoreId', user.stores[0].id);
         }
       } else if (user.stores.length > 0) {
         // No saved selection, select first store
-        console.log('[StoreContext] No saved selection, selecting first store:', { id: user.stores[0].id, name: user.stores[0].name, business_size: user.stores[0].business_size });
         setCurrentStore(user.stores[0]);
         localStorage.setItem('currentStoreId', user.stores[0].id);
       }
@@ -74,24 +70,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const refreshStores = useCallback(async () => {
     try {
-      console.log('[StoreContext] Refreshing stores from API...');
       const freshStores = await storeApi.getAll();
-      console.log('[StoreContext] Fresh stores received:', freshStores.map(s => ({ id: s.id, name: s.name, business_size: s.business_size })));
       setStores(freshStores);
 
       // Update current store if it's in the new list
       if (currentStore) {
         const updatedCurrentStore = freshStores.find(s => s.id === currentStore.id);
         if (updatedCurrentStore) {
-          console.log('[StoreContext] Updated current store:', { id: updatedCurrentStore.id, name: updatedCurrentStore.name, business_size: updatedCurrentStore.business_size });
           setCurrentStore(updatedCurrentStore);
         } else if (freshStores.length > 0) {
           // Current store was deleted, select first one
-          console.log('[StoreContext] Current store deleted, selecting first store');
           setCurrentStore(freshStores[0]);
           localStorage.setItem('currentStoreId', freshStores[0].id);
         } else {
-          console.log('[StoreContext] No stores available');
           setCurrentStore(null);
           localStorage.removeItem('currentStoreId');
         }
