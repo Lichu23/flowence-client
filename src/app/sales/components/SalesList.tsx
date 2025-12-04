@@ -221,7 +221,7 @@ export function SalesList({
                 onClick={() => onDownloadReceipt(s.id)}
                 className="btn-secondary flex-1 px-2 py-1.5 md:px-3 md:py-2 text-xs md:text-sm font-medium text-primary hover:text-primary/80 transition-colors active:scale-95"
               >
-                Descargar PDF
+                Descargar 
               </button>
               <Link
                 href={`/sales/${s.id}`}

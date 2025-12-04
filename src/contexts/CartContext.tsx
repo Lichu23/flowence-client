@@ -25,12 +25,15 @@ interface CartContextType {
   subtotal: number;
   tax: number;
   total: number;
+  taxRate: number;
+  setTaxRate: (rate: number) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [taxRate, setTaxRate] = useState<number>(0);
 
   const addItem = useCallback((product: CartProduct, quantity: number = 1) => {
     setItems(prev => {
@@ -58,10 +61,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const totalItems = useMemo(() => items.reduce((sum, i) => sum + i.quantity, 0), [items]);
   const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.product.price * i.quantity, 0), [items]);
-  const tax = 0; // replaced in POS using store tax if needed client-side, backend authoritative
+  const tax = useMemo(() => subtotal * (taxRate / 100), [subtotal, taxRate]);
   const total = subtotal + tax;
 
-  const value: CartContextType = useMemo(() => ({ items, addItem, removeItem, updateQuantity, clear, totalItems, subtotal, tax, total }), [items, addItem, removeItem, updateQuantity, clear, totalItems, subtotal, tax, total]);
+  const value: CartContextType = useMemo(() => ({
+    items,
+    addItem,
+    removeItem,
+    updateQuantity,
+    clear,
+    totalItems,
+    subtotal,
+    tax,
+    total,
+    taxRate,
+    setTaxRate
+  }), [items, addItem, removeItem, updateQuantity, clear, totalItems, subtotal, tax, total, taxRate]);
 
   return (
     <CartContext.Provider value={value}>{children}</CartContext.Provider>

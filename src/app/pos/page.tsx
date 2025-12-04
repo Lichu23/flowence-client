@@ -7,7 +7,7 @@ import { CartProduct, useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useStore } from "@/contexts/StoreContext";
 import { productApi, salesApi } from "@/lib/api";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 
 // Import types
 import { ProductFilters } from "@/types";
@@ -35,10 +35,20 @@ function POSContent() {
     totalItems,
     subtotal,
     total,
+    tax,
+    taxRate,
     addItem,
     clear,
+    setTaxRate,
   } = useCart();
   const toast = useToast();
+
+  // Set tax rate from store settings
+  useEffect(() => {
+    if (settingsStore?.tax_rate !== undefined) {
+      setTaxRate(settingsStore.tax_rate);
+    }
+  }, [settingsStore?.tax_rate, setTaxRate]);
 
   // State
   const [amount, setAmount] = useState("");
@@ -203,16 +213,7 @@ function POSContent() {
           {/* Inline Scanner in Cart */}
           <BarcodeScanner onScanSuccess={handleBarcodeScan} />
 
-          <CartSummary
-            totalItems={totalItems}
-            subtotal={subtotal}
-            total={total}
-            formatCurrency={formatCurrency}
-            onCheckout={handleCheckout}
-            loading={loading}
-            hasItems={items.length > 0}
-          />
-
+          {/* Cart Items First */}
           {items.length === 0 ? (
             <EmptyCart />
           ) : (
@@ -222,6 +223,18 @@ function POSContent() {
               onRemove={removeItem}
             />
           )}
+
+          {/* Summary and Checkout Button at Bottom */}
+          <CartSummary
+            totalItems={totalItems}
+            subtotal={subtotal}
+            tax={tax}
+            total={total}
+            formatCurrency={formatCurrency}
+            onCheckout={handleCheckout}
+            loading={loading}
+            hasItems={items.length > 0}
+          />
         </div>
       </main>
 
@@ -234,6 +247,8 @@ function POSContent() {
         amount={amount}
         onAmountChange={setAmount}
         subtotal={subtotal}
+        tax={tax}
+        taxRate={taxRate}
         total={total}
         change={change}
         formatCurrency={formatCurrency}
