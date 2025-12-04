@@ -55,52 +55,18 @@ function POSContent() {
       const product = await productApi.getByBarcode(currentStore!.id, barcode);
       addItem(product, 1);
       toast.success(`Producto agregado: ${product.name}`);
-    } catch (error) {
+    } catch {
       toast.error("Producto no encontrado");
-      console.error("Error fetching product by barcode:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const validateStock = async () => {
-    if (items.length === 0) return false;
-
-    setLoading(true);
-    try {
-      // Validar stock de cada producto en el carrito
-      for (const item of items) {
-        const product = await productApi.getById(
-          currentStore!.id,
-          item.product.id
-        );
-
-        // Verificar si hay suficiente stock de venta
-        if (product.stock_venta < item.quantity) {
-          toast.error(
-            `Stock insuficiente para "${item.product.name}". Disponible: ${product.stock_venta}, Solicitado: ${item.quantity}`
-          );
-          return false;
-        }
-      }
-      return true;
-    } catch (e: unknown) {
-      const errorMessage = e instanceof Error ? e.message : "Error desconocido";
-      toast.error(`Error validando stock: ${errorMessage}`);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (items.length === 0) return;
 
-    // Validar stock antes de abrir modal
-    const hasStock = await validateStock();
-    if (!hasStock) return;
-
-    // Si hay stock, abrir modal de pago
+    // Stock is validated server-side when processing the sale
+    // No need for client-side validation since products are already fetched when scanned
     setShowPayment(true);
   };
 
@@ -138,19 +104,8 @@ function POSContent() {
 
         setShowPayment(false);
       } catch (e: unknown) {
-        if (e instanceof Error) {
-          console.error("[CASH PAYMENT ERROR] Error message:", e.message);
-          console.error("[CASH PAYMENT ERROR] Error name:", e.name);
-          console.error("[CASH PAYMENT ERROR] Error stack:", e.stack);
-        }
-
         const errorMessage =
           e instanceof Error ? e.message : "Error al procesar venta";
-        console.error(
-          "[CASH PAYMENT ERROR] User-facing error message:",
-          errorMessage
-        );
-
         toast.error(errorMessage);
       } finally {
         setLoading(false);
@@ -181,27 +136,11 @@ function POSContent() {
         setShowPayment(false);
 
       } catch (e: unknown) {
-        console.error("[CARD PAYMENT ERROR] Error caught in catch block");
-        console.error("[CARD PAYMENT ERROR] Error object:", e);
-
-        if (e instanceof Error) {
-          console.error("[CARD PAYMENT ERROR] Error message:", e.message);
-          console.error("[CARD PAYMENT ERROR] Error name:", e.name);
-          console.error("[CARD PAYMENT ERROR] Error stack:", e.stack);
-        }
-
         const errorMessage =
           e instanceof Error ? e.message : "Error al procesar venta";
-        console.error(
-          "[CARD PAYMENT ERROR] User-facing error message:",
-          errorMessage
-        );
-
         toast.error(errorMessage);
       } finally {
-        console.log("[CARD PAYMENT] Entering finally block");
         setLoading(false);
-        console.log("[CARD PAYMENT] Loading state set to false");
       }
     }
   };
