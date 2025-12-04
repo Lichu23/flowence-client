@@ -13,6 +13,8 @@ interface PaymentModalProps {
   amount: string;
   onAmountChange: (value: string) => void;
   subtotal: number;
+  tax: number;
+  taxRate: number;
   total: number;
   change: number;
   formatCurrency: (value: number) => string;
@@ -29,6 +31,8 @@ export const PaymentModal: FC<PaymentModalProps> = ({
   amount,
   onAmountChange,
   subtotal,
+  tax,
+  taxRate,
   total,
   change,
   formatCurrency,
@@ -88,12 +92,13 @@ export const PaymentModal: FC<PaymentModalProps> = ({
             <span>Subtotal</span>
             <span className="tabular-nums">{formatCurrency(subtotal)}</span>
           </div>
-          <div className="flex justify-between text-xs sm:text-sm">
-            <span>Impuesto</span>
-            <span>Incluido por backend</span>
+          <div className="flex justify-between text-xs sm:text-sm text-foreground-muted">
+            <span>IVA ({taxRate}%)</span>
+            <span className="tabular-nums">{formatCurrency(tax)}</span>
           </div>
+          <div className="h-px bg-border my-2"></div>
           <div className="flex justify-between font-semibold text-sm sm:text-base">
-            <span>Total</span>
+            <span>Total (IVA incluido)</span>
             <span className="tabular-nums">{formatCurrency(total)}</span>
           </div>
         </div>
