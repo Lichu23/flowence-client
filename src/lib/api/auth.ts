@@ -32,8 +32,8 @@ export const authApi = {
 
   me: async (): Promise<UserWithStores> => {
     const response = await apiRequest<{ user: UserWithStores }>("/api/auth/me");
-    console.log('[authApi.me] Raw API response:', response);
-    console.log('[authApi.me] User stores:', response.data!.user.stores);
+    // console.log('[authApi.me] Raw API response:', response);
+    // console.log('[authApi.me] User stores:', response.data!.user.stores);
     return response.data!.user;
   },
 

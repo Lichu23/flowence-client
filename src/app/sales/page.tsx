@@ -7,19 +7,45 @@
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { useStore } from "@/contexts/StoreContext";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { salesApi } from "@/lib/api";
 import type { Sale } from "@/types";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useToast } from "@/components/ui/Toast";
 import { HelpButton } from "@/components/help/HelpModal";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   SalesStats,
   SalesFilters,
   SalesList,
   SalesPagination,
 } from "./components";
+
+// Type for sales list response
+interface SalesListResponse {
+  sales: Sale[];
+  pagination: {
+    total: number;
+    pages: number;
+    page: number;
+    limit: number;
+  };
+}
+
+// Generate cache key for client-side caching
+function getCacheKey(
+  storeId: string,
+  page: number,
+  method: string,
+  status: string
+): string {
+  return JSON.stringify({
+    storeId,
+    page,
+    method,
+    status,
+  });
+}
 
 export default function SalesPage() {
   return (
@@ -34,12 +60,19 @@ function SalesContent() {
   const { formatCurrency, formatDateTime } = useSettings();
   const toast = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const salesListRef = useRef<HTMLDivElement>(null);
 
-  const [loading, setLoading] = useState(false);
+  // Client-side cache for pages (Map preserves insertion order)
+  const cacheRef = useRef<Map<string, SalesListResponse>>(new Map());
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // State management
   const [sales, setSales] = useState<Sale[]>([]);
-  const [page, setPage] = useState(1);
-  const [pages, setPages] = useState(1);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [totalSales, setTotalSales] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [method, setMethod] = useState<"cash" | "card" | "mixed" | "">("");
   const [status, setStatus] = useState<
     "completed" | "refunded" | "cancelled" | "pending" | ""
@@ -73,38 +106,117 @@ function SalesContent() {
     };
   }, [sales]);
 
+  // Sync URL → state (single direction, no loop)
+  // URL is the single source of truth for page number
+  useEffect(() => {
+    const pageFromUrl = parseInt(searchParams.get("page") || "1", 10);
+    setCurrentPage(pageFromUrl);
+  }, [searchParams]); // ← ONLY depend on searchParams, NOT currentPage
+
+  // Clear cache when filters change (not page)
+  useEffect(() => {
+    cacheRef.current.clear();
+  }, [method, status, currentStore?.id]);
+
+  // Load sales with cache-first strategy
   useEffect(() => {
     if (!currentStore) return;
-    const fetchData = async () => {
-      setLoading(true);
+
+    const cacheKey = getCacheKey(currentStore.id, currentPage, method, status);
+
+    // Check cache first - instant load for visited pages
+    const cached = cacheRef.current.get(cacheKey);
+    if (cached) {
+      // Instant update from cache (zero flicker)
+      setSales(cached.sales || []);
+      setTotalSales(cached.pagination?.total || 0);
+      setTotalPages(cached.pagination?.pages || 0);
+      setIsInitialLoad(false);
+      return; // Skip fetch - use cached data
+    }
+
+    // Abort any in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    const { signal } = controller;
+
+    const loadSales = async () => {
       try {
-        const data = await salesApi.list(currentStore.id, {
-          page,
-          limit: 20,
+        const result = await salesApi.list(currentStore.id, {
+          page: currentPage,
+          limit: 10,
           payment_method: method || undefined,
           payment_status: status || undefined,
         });
-        setSales(data.sales);
-        setPages(data.pagination.pages);
-        setTotalSales(data.pagination.total);
-      } catch (e) {
-        console.error(e);
-        setSales([]);
-        setPages(0);
-        setTotalSales(0);
-      } finally {
-        setLoading(false);
+
+        // Only update state if request wasn't aborted
+        if (!signal.aborted) {
+          // Cache the result
+          cacheRef.current.set(cacheKey, result);
+
+          setSales(result.sales || []);
+          setTotalSales(result.pagination?.total || 0);
+          setTotalPages(result.pagination?.pages || 0);
+          setIsInitialLoad(false);
+        }
+      } catch (error) {
+        // Ignore abort errors (normal when filters change rapidly)
+        if (error instanceof Error && error.name === "AbortError") {
+          return;
+        }
+
+        // Only update error state if request wasn't aborted
+        if (!signal.aborted) {
+          console.error("Failed to load sales:", error);
+          setSales([]);
+          setTotalSales(0);
+          setTotalPages(0);
+          setIsInitialLoad(false);
+        }
       }
     };
-    fetchData();
-  }, [currentStore, page, method, status]);
 
-  const handleSearch = async () => {
+    loadSales();
+
+    // Cleanup: abort request if dependencies change before completion
+    return () => {
+      controller.abort();
+    };
+  }, [currentStore, currentPage, method, status]);
+
+  // Handlers - memoized to prevent unnecessary re-renders
+  const handlePageChange = useCallback(
+    (page: number) => {
+      // Update URL directly (state will sync via useEffect)
+      const params = new URLSearchParams(searchParams.toString());
+      if (page === 1) {
+        params.delete("page");
+      } else {
+        params.set("page", page.toString());
+      }
+      const newUrl = params.toString() ? `?${params.toString()}` : "";
+      router.replace(`/sales${newUrl}`, { scroll: false });
+
+      // Scroll to top of sales list smoothly
+      if (salesListRef.current) {
+        salesListRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    },
+    [router, searchParams]
+  );
+
+  const handleSearch = useCallback(async () => {
     if (!searchTerm.trim()) {
       toast.error("Ingresa un número de ticket o código de barras");
       return;
     }
-    setLoading(true);
     try {
       const result = await salesApi.searchByTicket(
         currentStore!.id,
@@ -114,20 +226,21 @@ function SalesContent() {
     } catch (e) {
       console.error(e);
       toast.error("Venta no encontrada");
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [searchTerm, currentStore, toast, router]);
 
-  const handleDownloadReceipt = async (saleId: string) => {
-    try {
-      await salesApi.downloadReceipt(currentStore!.id, saleId);
-      toast.success("Recibo descargado");
-    } catch (error) {
-      console.error("Failed to download receipt:", error);
-      toast.error("Error al descargar recibo");
-    }
-  };
+  const handleDownloadReceipt = useCallback(
+    async (saleId: string) => {
+      try {
+        await salesApi.downloadReceipt(currentStore!.id, saleId);
+        toast.success("Recibo descargado");
+      } catch (error) {
+        console.error("Failed to download receipt:", error);
+        toast.error("Error al descargar recibo");
+      }
+    },
+    [currentStore, toast]
+  );
 
   if (!currentStore) {
     return (
@@ -167,19 +280,19 @@ function SalesContent() {
           method={method}
           onMethodChange={(value) => {
             setMethod(value);
-            setPage(1);
+            handlePageChange(1); // Reset to page 1 when filter changes
           }}
           status={status}
           onStatusChange={(value) => {
             setStatus(value);
-            setPage(1);
+            handlePageChange(1); // Reset to page 1 when filter changes
           }}
         />
 
         {/* Sales List */}
-        <div className="glass-card">
+        <div className="glass-card" ref={salesListRef}>
           <SalesList
-            loading={loading}
+            loading={isInitialLoad}
             sales={sales}
             formatCurrency={formatCurrency}
             formatDateTime={formatDateTime}
@@ -188,12 +301,13 @@ function SalesContent() {
             currentStoreId={currentStore.id}
           />
 
-          {/* Pagination */}
+          {/* Pagination - never show loading state to prevent flicker */}
           <SalesPagination
-            page={page}
-            pages={pages}
+            page={currentPage}
+            pages={totalPages}
             totalSales={totalSales}
-            onPageChange={setPage}
+            onPageChange={handlePageChange}
+            loading={false}
           />
         </div>
       </main>
