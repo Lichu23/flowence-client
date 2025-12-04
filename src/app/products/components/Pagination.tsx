@@ -1,6 +1,6 @@
 // src/app/products/components/Pagination.tsx
 
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PaginationProps {
@@ -11,7 +11,17 @@ interface PaginationProps {
   loading?: boolean;
 }
 
-export const Pagination: FC<PaginationProps> = ({
+/**
+ * Pagination Component - Optimized for zero flicker
+ *
+ * This component is memoized and never shows loading states to ensure
+ * the pagination text ("Page X of Y • Z products") remains stable and
+ * never flickers during page navigation.
+ *
+ * The parent component handles caching, so navigation between pages
+ * is instant without re-fetching already-visited pages.
+ */
+const PaginationComponent: FC<PaginationProps> = ({
   currentPage,
   totalPages,
   totalProducts,
@@ -41,19 +51,17 @@ export const Pagination: FC<PaginationProps> = ({
   return (
     <div className="px-3 sm:px-4 py-3 border-t border-border">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-        {/* Page Information */}
-        <div className="text-xs sm:text-sm text-foreground-muted text-center sm:text-left">
-          {loading ? (
-            <span className="flex items-center gap-2">
-              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary"></div>
-              Cargando...
-            </span>
-          ) : (
-            <span>
-              Página <strong>{currentPage}</strong> de <strong>{totalPages}</strong>
-              <span className="hidden sm:inline"> ({totalProducts} productos)</span>
-            </span>
-          )}
+        {/* Page Information - Always visible, never replaced with loading state */}
+        <div
+          className="text-xs sm:text-sm text-foreground-muted text-center sm:text-left"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <span>
+            Página <strong>{currentPage}</strong> de <strong>{totalPages}</strong>
+            <span className="hidden sm:inline"> • {totalProducts} productos</span>
+          </span>
         </div>
 
         {/* Navigation Buttons */}
@@ -86,12 +94,14 @@ export const Pagination: FC<PaginationProps> = ({
         </nav>
       </div>
 
-      {/* Mobile-only product count */}
-      {!loading && (
-        <div className="sm:hidden text-xs text-foreground-muted text-center mt-2">
-          {totalProducts} productos en total
-        </div>
-      )}
+      {/* Mobile-only product count - Always visible */}
+      <div className="sm:hidden text-xs text-foreground-muted text-center mt-2">
+        {totalProducts} productos en total
+      </div>
     </div>
   );
 };
+
+PaginationComponent.displayName = 'Pagination';
+
+export const Pagination = memo(PaginationComponent);
