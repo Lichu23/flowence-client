@@ -79,27 +79,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!token || !user) return;
 
-    console.log('⏰ Setting up token auto-refresh (every 25 minutes)');
-
     const refreshInterval = setInterval(async () => {
-      console.log('🔄 Auto-refreshing token...');
       try {
         const refreshToken = localStorage.getItem('refreshToken');
         if (!refreshToken) {
-          console.error('❌ No refresh token available');
           return;
         }
-        
+
         const response = await authApi.refreshToken(refreshToken);
         setToken(response.token);
         setUser(response.user);
         localStorage.setItem('token', response.token);
-        localStorage.setItem('refreshToken', response.refreshToken); // Update refresh token
+        localStorage.setItem('refreshToken', response.refreshToken);
         localStorage.setItem('user', JSON.stringify(response.user));
-        console.log('✅ Token auto-refreshed successfully');
       } catch (error) {
-        console.error('❌ Auto-refresh failed:', error);
-        
         // Only logout if it's an authentication error, not a network error
         if (error instanceof Error && (
           error.message.includes('Network error') ||
@@ -107,17 +100,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           error.message.includes('Connection timeout') ||
           error.message.includes('Unable to connect to server')
         )) {
-          console.log('Network error during auto-refresh, keeping user logged in');
           // Don't logout on network errors
         } else {
-          console.log('Authentication error during auto-refresh, will logout on next API call');
           // Don't logout immediately, let the 401 interceptor handle it
         }
       }
     }, 25 * 60 * 1000); // 25 minutes
 
     return () => {
-      console.log('🛑 Clearing token auto-refresh interval');
       clearInterval(refreshInterval);
     };
   }, [token, user]);
@@ -172,17 +162,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     try {
-      console.log('[AuthContext] Refreshing user data from API...');
       const freshUser = await authApi.me();
-      console.log('[AuthContext] Fresh user received:', {
-        id: freshUser.id,
-        email: freshUser.email,
-        role: freshUser.role,
-        stores: freshUser.stores.map(s => ({ id: s.id, name: s.name, business_size: s.business_size }))
-      });
       setUser(freshUser);
       localStorage.setItem('user', JSON.stringify(freshUser));
-      console.log('[AuthContext] User data saved to localStorage');
     } catch (error) {
       console.error('Failed to refresh user:', error);
       throw error;

@@ -7,7 +7,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStore } from '@/contexts/StoreContext';
 import { productApi } from '@/lib/api';
-import { Product } from '@/types';
+import { Product, ProductListResponse } from '@/types';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useSettings } from '@/contexts/SettingsContext';
 import { HelpButton } from '@/components/help/HelpModal';
@@ -19,6 +19,25 @@ import {
   Pagination,
 } from './components';
 
+// Cache key generator for consistent cache lookup
+function getCacheKey(
+  storeId: string,
+  page: number,
+  search: string,
+  category: string,
+  showLowStock: boolean,
+  showActive: boolean | undefined
+): string {
+  return JSON.stringify({
+    storeId,
+    page,
+    search,
+    category,
+    showLowStock,
+    showActive,
+  });
+}
+
 function ProductsContent() {
   const { user } = useAuth();
   const { currentStore } = useStore();
@@ -27,20 +46,16 @@ function ProductsContent() {
   const searchParams = useSearchParams();
   const productListRef = useRef<HTMLDivElement>(null);
 
-  // Track re-renders for performance debugging
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-  console.log(`[PRODUCTS PAGE] 🔄 Component render #${renderCount.current}`);
-
-  // Get page from URL, default to 1
-  const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
+  // Client-side cache for pages (Map preserves insertion order)
+  const cacheRef = useRef<Map<string, ProductListResponse>>(new Map());
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // State management
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(pageFromUrl);
+  const [currentPage, setCurrentPage] = useState(1);
   const [refetchTrigger, setRefetchTrigger] = useState(0);
   const [stats, setStats] = useState({
     total_products: 0,
@@ -62,17 +77,15 @@ function ProductsContent() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  // Sync URL with current page
+  // Sync URL → state (single direction, no loop)
+  // URL is the single source of truth for page number
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (currentPage === 1) {
-      params.delete('page');
-    } else {
-      params.set('page', currentPage.toString());
-    }
-    const newUrl = params.toString() ? `?${params.toString()}` : '';
-    router.replace(`/products${newUrl}`, { scroll: false });
-  }, [currentPage, router, searchParams]);
+    const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
+
+    // Only update state if URL changed (prevents circular updates)
+    // This check is CRITICAL: we compare against the NEW value, not trigger a chain
+    setCurrentPage(pageFromUrl);
+  }, [searchParams]); // ← ONLY depend on searchParams, NOT currentPage
 
   // Load categories once on mount
   useEffect(() => {
@@ -90,25 +103,53 @@ function ProductsContent() {
     loadCategories();
   }, [currentStore]);
 
-  // Load products with AbortController to prevent race conditions
+  // Clear cache when filters change (not page)
+  useEffect(() => {
+    cacheRef.current.clear();
+  }, [debouncedSearch, selectedCategory, showLowStock, currentStore?.id, refetchTrigger]);
+
+  // Load products with cache-first strategy
   useEffect(() => {
     if (!currentStore) return;
 
+    const cacheKey = getCacheKey(
+      currentStore.id,
+      currentPage,
+      debouncedSearch,
+      selectedCategory,
+      showLowStock,
+      showActive
+    );
+
+    // Check cache first - instant load for visited pages
+    const cached = cacheRef.current.get(cacheKey);
+    if (cached) {
+      // Instant update from cache (zero flicker)
+      setProducts(cached.products || []);
+      setTotalProducts(cached.pagination?.total || 0);
+      setTotalPages(cached.pagination?.pages || 0);
+      setStats(cached.stats || {
+        total_products: 0,
+        total_value: 0,
+        low_stock_count: 0,
+        out_of_stock_count: 0,
+        categories_count: 0,
+      });
+      setIsInitialLoad(false);
+      return; // Skip fetch - use cached data
+    }
+
+    // Abort any in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
     const controller = new AbortController();
+    abortControllerRef.current = controller;
     const { signal } = controller;
 
     const loadProducts = async () => {
-      const pageStartTime = performance.now();
-      console.log('[PRODUCTS PAGE] 🚀 Starting product fetch...');
-
       try {
-        // Set loading immediately to show spinner ASAP
-        setLoading(true);
-        const setLoadingTime = performance.now();
-        console.log(`[PRODUCTS PAGE] ⏱️ setLoading(true) took: ${(setLoadingTime - pageStartTime).toFixed(2)}ms`);
-        console.log('[PRODUCTS PAGE] ⚠️ Backend response taking >500ms - backend optimization needed!');
-
-        const apiCallStartTime = performance.now();
         const result = await productApi.getAll(
           currentStore.id,
           {
@@ -121,14 +162,14 @@ function ProductsContent() {
             sort_by: 'created_at',
             sort_order: 'desc',
           },
-          { signal } // Pass AbortSignal to cancel stale requests
+          { signal }
         );
-        const apiCallEndTime = performance.now();
-        console.log(`[PRODUCTS PAGE] ⏱️ API call completed in: ${(apiCallEndTime - apiCallStartTime).toFixed(2)}ms`);
 
         // Only update state if request wasn't aborted
         if (!signal.aborted) {
-          const stateUpdateStartTime = performance.now();
+          // Cache the result
+          cacheRef.current.set(cacheKey, result);
+
           setProducts(result.products || []);
           setTotalProducts(result.pagination?.total || 0);
           setTotalPages(result.pagination?.pages || 0);
@@ -139,9 +180,7 @@ function ProductsContent() {
             out_of_stock_count: 0,
             categories_count: 0,
           });
-          const stateUpdateEndTime = performance.now();
-          console.log(`[PRODUCTS PAGE] ⏱️ State updates took: ${(stateUpdateEndTime - stateUpdateStartTime).toFixed(2)}ms`);
-          console.log(`[PRODUCTS PAGE] ✅ Total page load time: ${(stateUpdateEndTime - pageStartTime).toFixed(2)}ms`);
+          setIsInitialLoad(false);
         }
       } catch (error) {
         // Ignore abort errors (normal when filters change rapidly)
@@ -162,10 +201,7 @@ function ProductsContent() {
             out_of_stock_count: 0,
             categories_count: 0,
           });
-        }
-      } finally {
-        if (!signal.aborted) {
-          setLoading(false);
+          setIsInitialLoad(false);
         }
       }
     };
@@ -180,7 +216,16 @@ function ProductsContent() {
 
   // Handlers - memoized to prevent unnecessary re-renders
   const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
+    // Update URL directly (state will sync via useEffect)
+    const params = new URLSearchParams(searchParams.toString());
+    if (page === 1) {
+      params.delete('page');
+    } else {
+      params.set('page', page.toString());
+    }
+    const newUrl = params.toString() ? `?${params.toString()}` : '';
+    router.replace(`/products${newUrl}`, { scroll: false });
+
     // Scroll to top of product list smoothly
     if (productListRef.current) {
       productListRef.current.scrollIntoView({
@@ -188,7 +233,7 @@ function ProductsContent() {
         block: 'start'
       });
     }
-  }, []);
+  }, [router, searchParams]);
 
   const handleEdit = useCallback((product: Product) => {
     setEditingProduct(product);
@@ -295,7 +340,7 @@ function ProductsContent() {
         <div className="glass-card" ref={productListRef}>
           <ProductList
             products={products}
-            loading={loading}
+            loading={isInitialLoad}
             user={user}
             formatCurrency={formatCurrency}
             onEdit={handleEdit}
@@ -304,13 +349,13 @@ function ProductsContent() {
             onCreateClick={handleCreateClick}
           />
 
-          {/* Pagination */}
+          {/* Pagination - never show loading state to prevent flicker */}
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             totalProducts={totalProducts}
             onPageChange={handlePageChange}
-            loading={loading}
+            loading={false}
           />
         </div>
 

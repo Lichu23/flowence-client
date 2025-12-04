@@ -40,8 +40,6 @@ export async function refreshAccessToken(): Promise<string> {
         throw new Error("No refresh token available");
       }
 
-      console.log("🔄 Refreshing access token using refresh token...");
-
       const response = await fetch(`${API_URL}/api/auth/refresh-token`, {
         method: "POST",
         headers: {
@@ -64,10 +62,8 @@ export async function refreshAccessToken(): Promise<string> {
       localStorage.setItem("refreshToken", newRefreshToken);
       localStorage.setItem("user", JSON.stringify(newUser));
 
-      console.log("✅ Token refreshed successfully");
       return newToken;
     } catch (error) {
-      console.error("❌ Token refresh failed:", error);
       // Only clear access token on refresh failure, keep refresh token
       // Refresh token should only be removed on explicit logout
       localStorage.removeItem("token");
@@ -115,67 +111,17 @@ export async function apiRequest<T>(
   try {
     const fullUrl = `${API_URL}${endpoint}`;
 
-    // Performance monitoring for products endpoint
-    const isProductsEndpoint = endpoint.includes('/products');
-    const startTime = isProductsEndpoint ? performance.now() : 0;
-
-    // Log request details for sales and products endpoints
-    if (endpoint.includes('/sales') || isProductsEndpoint) {
-      console.log(`[API CLIENT] Making request to ${isProductsEndpoint ? 'products' : 'sales'} endpoint`);
-      console.log('[API CLIENT] Endpoint:', endpoint);
-      console.log('[API CLIENT] Full URL:', fullUrl);
-      console.log('[API CLIENT] Method:', options.method || 'GET');
-      if (isProductsEndpoint) {
-        console.log('[API CLIENT] ⏱️ Request started at:', new Date().toISOString());
-      }
-    }
-
-    const fetchStartTime = isProductsEndpoint ? performance.now() : 0;
     const response = await fetch(fullUrl, {
       ...options,
       headers,
     });
-    const fetchEndTime = isProductsEndpoint ? performance.now() : 0;
 
-    if (isProductsEndpoint) {
-      console.log(`[API CLIENT] ⏱️ Network request took: ${(fetchEndTime - fetchStartTime).toFixed(2)}ms`);
-    }
-
-    // Log response details for sales and products endpoints
-    if (endpoint.includes('/sales') || isProductsEndpoint) {
-      console.log('[API CLIENT] Response received');
-      console.log('[API CLIENT] Status:', response.status);
-      if (isProductsEndpoint) {
-        console.log('[API CLIENT] Response size:', response.headers.get('content-length'), 'bytes');
-      }
-    }
-
-    const parseStartTime = isProductsEndpoint ? performance.now() : 0;
     const data: ApiResponse<T> = await response.json();
-    const parseEndTime = isProductsEndpoint ? performance.now() : 0;
-
-    if (isProductsEndpoint) {
-      console.log(`[API CLIENT] ⏱️ JSON parsing took: ${(parseEndTime - parseStartTime).toFixed(2)}ms`);
-      console.log(`[API CLIENT] ⏱️ Total request time: ${(parseEndTime - startTime).toFixed(2)}ms`);
-      const productData = data.data as { products?: unknown[] };
-      console.log('[API CLIENT] Products received:', productData?.products?.length || 0);
-    }
-
-    // Log parsed response data for sales endpoints
-    if (endpoint.includes('/sales')) {
-      console.log('[API CLIENT] Parsed response data:', JSON.stringify(data, null, 2));
-    }
 
     // Handle 401 Unauthorized - try to refresh token
     if (response.status === 401 && !isRetry && !endpoint.includes("/auth/")) {
-      console.log("🔑 Received 401, attempting token refresh...");
-
       try {
         const newToken = await refreshAccessToken();
-        console.log(
-          "✅ New token obtained (first 20 chars):",
-          newToken.substring(0, 20) + "..."
-        );
 
         // Retry the original request with new token
         const newHeaders = {
@@ -183,27 +129,21 @@ export async function apiRequest<T>(
           Authorization: `Bearer ${newToken}`,
         };
 
-        console.log("🔄 Retrying request to:", `${API_URL}${endpoint}`);
         const retryResponse = await fetch(`${API_URL}${endpoint}`, {
           ...options,
           headers: newHeaders,
         });
 
-        console.log("📊 Retry response status:", retryResponse.status);
         const retryData: ApiResponse<T> = await retryResponse.json();
 
         if (!retryResponse.ok) {
-          console.error("❌ Retry failed with status:", retryResponse.status);
-          console.error("❌ Retry error:", retryData.error);
           throw new Error(
             retryData.error?.message || "Request failed after token refresh"
           );
         }
 
-        console.log("✅ Retry successful!");
         return retryData;
       } catch {
-        console.error("Failed to refresh token, redirecting to login...");
         // Token refresh failed, user needs to login again
         if (typeof window !== "undefined") {
           window.location.href = "/login";
