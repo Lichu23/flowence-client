@@ -89,17 +89,19 @@ export const storeApi = {
       };
     }[]>(`/api/stores/${storeId}/users`);
 
-    // Transform backend response to Employee interface
-    const employees: Employee[] = response.data!.map((relationship) => ({
-      id: relationship.id,
-      user_id: relationship.user_id,
-      store_id: relationship.store_id,
-      name: relationship.user.name,
-      email: relationship.user.email,
-      role: "employee",
-      joined_at: relationship.created_at,
-      status: "active" as const,
-    }));
+    // Filter only employees (exclude owners) and transform to Employee interface
+    const employees: Employee[] = response.data!
+      .filter((relationship) => relationship.role === "employee")
+      .map((relationship) => ({
+        id: relationship.id,
+        user_id: relationship.user_id,
+        store_id: relationship.store_id,
+        name: relationship.user.name,
+        email: relationship.user.email,
+        role: "employee",
+        joined_at: relationship.created_at,
+        status: "active" as const,
+      }));
 
     return employees;
   },
