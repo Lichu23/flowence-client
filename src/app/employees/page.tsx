@@ -18,11 +18,14 @@ import {
   InvitationsTable,
   InvitationCard,
   EmployeesList,
+  EmployeesPagination,
 } from "./components";
+
+const EMPLOYEES_PER_PAGE = 10;
 
 function EmployeesContent() {
   const { user } = useAuth();
-  const { currentStore } = useStore();
+  const { currentStore, stores } = useStore();
   const toast = useToast();
 
   const [invitations, setInvitations] = useState<Invitation[]>([]);
@@ -31,6 +34,14 @@ function EmployeesContent() {
   const [employeesLoading, setEmployeesLoading] = useState(true);
   const [showInviteForm, setShowInviteForm] = useState(false);
 
+  // Pagination state for employees
+  const [employeesPage, setEmployeesPage] = useState(1);
+  const [totalEmployees, setTotalEmployees] = useState(0);
+
+  // Pagination state for invitations
+  const [invitationsPage, setInvitationsPage] = useState(1);
+  const [totalInvitations, setTotalInvitations] = useState(0);
+
   const loadInvitations = useCallback(async () => {
     if (!currentStore) return;
 
@@ -38,6 +49,7 @@ function EmployeesContent() {
       setInvitationsLoading(true);
       const data = await invitationApi.getByStore(currentStore.id);
       setInvitations(data);
+      setTotalInvitations(data.length);
     } catch (error) {
       console.error("Failed to load invitations:", error);
     } finally {
@@ -52,6 +64,7 @@ function EmployeesContent() {
       setEmployeesLoading(true);
       const data = await storeApi.getEmployees(currentStore.id);
       setEmployees(data);
+      setTotalEmployees(data.length);
     } catch (error) {
       console.error("Failed to load employees:", error);
     } finally {
@@ -66,6 +79,12 @@ function EmployeesContent() {
     }
   }, [currentStore, loadInvitations, loadEmployees]);
 
+  // Reset pagination when store changes
+  useEffect(() => {
+    setEmployeesPage(1);
+    setInvitationsPage(1);
+  }, [currentStore?.id]);
+
   const handleSendInvite = async (email: string, storeId: string) => {
     await invitationApi.send({
       store_id: storeId,
@@ -74,7 +93,7 @@ function EmployeesContent() {
     });
 
     loadInvitations();
-    loadEmployees(); // Refresh employees list in case they accepted immediately
+    loadEmployees();
     toast.success(`Invitación enviada a ${email}`);
   };
 
@@ -96,7 +115,6 @@ function EmployeesContent() {
     try {
       const result = await invitationApi.resend(id);
       toast.success("Invitación reenviada exitosamente");
-      // Copy URL to clipboard
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(result.invitationUrl);
         toast.info("URL copiada al portapapeles");
@@ -107,6 +125,19 @@ function EmployeesContent() {
       toast.error(errorMessage);
     }
   };
+
+  // Paginated data
+  const paginatedEmployees = employees.slice(
+    (employeesPage - 1) * EMPLOYEES_PER_PAGE,
+    employeesPage * EMPLOYEES_PER_PAGE
+  );
+  const totalEmployeesPages = Math.ceil(totalEmployees / EMPLOYEES_PER_PAGE) || 1;
+
+  const paginatedInvitations = invitations.slice(
+    (invitationsPage - 1) * EMPLOYEES_PER_PAGE,
+    invitationsPage * EMPLOYEES_PER_PAGE
+  );
+  const totalInvitationsPages = Math.ceil(totalInvitations / EMPLOYEES_PER_PAGE) || 1;
 
   if (!currentStore) {
     return (
@@ -122,7 +153,6 @@ function EmployeesContent() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background bg-grid">
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
@@ -157,22 +187,28 @@ function EmployeesContent() {
           isOpen={showInviteForm}
           onClose={() => setShowInviteForm(false)}
           onSuccess={handleSendInvite}
-          stores={user?.stores || []}
+          stores={stores.filter(s => s.role === 'owner')}
           currentStoreId={currentStore.id}
         />
 
         {/* Active Employees Section */}
-        <div className="glass-card border border-border mb-6">
+        <div className="glass-card mb-6">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border">
             <h3 className="text-base sm:text-lg font-semibold text-foreground">
               Empleados Activos
             </h3>
           </div>
-          <EmployeesList employees={employees} loading={employeesLoading} />
+          <EmployeesList employees={paginatedEmployees} loading={employeesLoading} />
+          <EmployeesPagination
+            currentPage={employeesPage}
+            totalPages={totalEmployeesPages}
+            totalEmployees={totalEmployees}
+            onPageChange={setEmployeesPage}
+          />
         </div>
 
         {/* Invitations List */}
-        <div className="glass-card border border-border">
+        <div className="glass-card">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border">
             <h3 className="text-base sm:text-lg font-semibold text-foreground">
               Invitaciones
@@ -191,18 +227,16 @@ function EmployeesContent() {
           ) : (
             <>
               {/* Desktop Table View */}
-              <div className="hidden md:block">
-                <InvitationsTable
-                  invitations={invitations}
-                  onResend={handleResend}
-                  onRevoke={handleRevoke}
-                  userRole={user?.role}
-                />
-              </div>
+              <InvitationsTable
+                invitations={paginatedInvitations}
+                onResend={handleResend}
+                onRevoke={handleRevoke}
+                userRole={user?.role}
+              />
 
               {/* Mobile Card View */}
-              <div className="md:hidden divide-y divide-border">
-                {invitations.map((invitation) => (
+              <div className="lg:hidden divide-y divide-border">
+                {paginatedInvitations.map((invitation) => (
                   <InvitationCard
                     key={invitation.id}
                     invitation={invitation}
@@ -212,12 +246,19 @@ function EmployeesContent() {
                   />
                 ))}
               </div>
+
+              {/* Invitations Pagination */}
+              <EmployeesPagination
+                currentPage={invitationsPage}
+                totalPages={totalInvitationsPages}
+                totalEmployees={totalInvitations}
+                onPageChange={setInvitationsPage}
+              />
             </>
           )}
         </div>
       </main>
 
-      {/* Help Button */}
       <HelpButton />
     </div>
   );

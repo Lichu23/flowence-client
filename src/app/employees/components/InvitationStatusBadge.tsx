@@ -9,10 +9,10 @@ export const InvitationStatusBadge: FC<InvitationStatusBadgeProps> = ({ status }
     const badges = {
       pending: "bg-warning/10 text-warning border-warning/20",
       accepted: "bg-success/10 text-success border-success/20",
-      expired: "bg-muted text-foreground-muted border-border",
+      expired: "bg-gray-800 text-foreground-muted border-border",
       revoked: "bg-error/10 text-error border-error/20",
     };
-    return badges[status as keyof typeof badges] || "bg-muted text-foreground-muted border-border";
+    return badges[status as keyof typeof badges] || "bg-gray-800 text-foreground-muted border-border";
   };
 
   return (

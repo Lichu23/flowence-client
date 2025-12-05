@@ -28,12 +28,10 @@ export const EmployeesList: FC<EmployeesListProps> = ({ employees, loading }) =>
   return (
     <>
       {/* Desktop Table View */}
-      <div className="hidden md:block">
-        <EmployeesTable employees={employees} />
-      </div>
+      <EmployeesTable employees={employees} />
 
       {/* Mobile Card View */}
-      <div className="md:hidden divide-y divide-border">
+      <div className="lg:hidden divide-y divide-border">
         {employees.map((employee) => (
           <EmployeeCard key={employee.id} employee={employee} />
         ))}

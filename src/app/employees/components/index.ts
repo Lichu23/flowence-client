@@ -6,3 +6,4 @@ export { InviteEmployeeModal } from './InviteEmployeeModal';
 export { EmployeesList } from './EmployeesList';
 export { EmployeesTable } from './EmployeesTable';
 export { EmployeeCard } from './EmployeeCard';
+export { EmployeesPagination } from './EmployeePagination';
