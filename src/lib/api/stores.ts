@@ -18,8 +18,6 @@ import {
 export const storeApi = {
   getAll: async (): Promise<StoreListItem[]> => {
     const response = await apiRequest<StoreListItem[]>("/api/stores");
-    console.log('[storeApi.getAll] Raw API response:', response);
-    console.log('[storeApi.getAll] Stores:', response.data);
     return response.data!;
   },
 
@@ -62,11 +60,6 @@ export const storeApi = {
     businessSize: "small" | "medium_large"
   ): Promise<Store> => {
     const payload = { business_size: businessSize };
-    console.log('[setBusinessSize] 📤 Sending request:', {
-      url: `/api/stores/${storeId}/business-size`,
-      method: 'POST',
-      payload
-    });
 
     const response = await apiRequest<Store>(
       `/api/stores/${storeId}/business-size`,
@@ -76,14 +69,38 @@ export const storeApi = {
       }
     );
 
-    console.log('[setBusinessSize] ✅ Response received:', response);
     return response.data!;
   },
 
   getEmployees: async (storeId: string): Promise<Employee[]> => {
-    const response = await apiRequest<Employee[]>(
-      `/api/stores/${storeId}/employees`
-    );
-    return response.data!;
+    const response = await apiRequest<{
+      id: string;
+      user_id: string;
+      store_id: string;
+      role: "employee" | "owner";
+      created_at: string;
+      user: {
+        id: string;
+        email: string;
+        name: string;
+        role: "employee" | "owner";
+        created_at: string;
+        updated_at: string;
+      };
+    }[]>(`/api/stores/${storeId}/users`);
+
+    // Transform backend response to Employee interface
+    const employees: Employee[] = response.data!.map((relationship) => ({
+      id: relationship.id,
+      user_id: relationship.user_id,
+      store_id: relationship.store_id,
+      name: relationship.user.name,
+      email: relationship.user.email,
+      role: "employee",
+      joined_at: relationship.created_at,
+      status: "active" as const,
+    }));
+
+    return employees;
   },
 };
