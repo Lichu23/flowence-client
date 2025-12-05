@@ -175,7 +175,7 @@ export const ProductForm: FC<ProductFormProps> = ({
       }}
     >
       <div
-        className="glass-card max-w-2xl w-full p-4 sm:p-6 my-4 sm:my-8 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto shadow-2xl"
+        className="bg-black max-w-2xl w-full p-4 sm:p-6 my-4 sm:my-8 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4 sm:mb-5">

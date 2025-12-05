@@ -7,32 +7,33 @@ interface EmployeeCardProps {
 
 export const EmployeeCard: FC<EmployeeCardProps> = ({ employee }) => {
   return (
-    <div className="p-4 hover:bg-card-hover transition-colors">
+    <div className="p-4">
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1 min-w-0 mr-2">
-          <p className="text-sm font-medium text-foreground truncate mb-1">
+          <h3 className="text-base font-semibold text-foreground truncate">
             {employee.name || employee.email}
-          </p>
+          </h3>
           {employee.name && (
-            <p className="text-xs text-foreground-muted truncate">
+            <p className="text-xs text-foreground-subtle mt-0.5">
               {employee.email}
             </p>
           )}
-          <span className="inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full bg-success/10 text-success border border-success/20">
-            Activo
-          </span>
         </div>
-        <span className="text-xs text-foreground-muted capitalize bg-card px-2 py-1 rounded flex-shrink-0">
-          {employee.role}
+        <span className="badge flex-shrink-0 bg-success/10 text-success border-success/20">
+          Activo
         </span>
       </div>
 
-      <div className="text-xs text-foreground-subtle space-y-1">
-        <div className="flex justify-between">
-          <span>Se unió:</span>
-          <span className="font-medium text-foreground-muted">
+      <div className="grid grid-cols-2 gap-2 mb-3">
+        <div className="glass-card p-2">
+          <p className="text-xs text-foreground-muted">Rol</p>
+          <p className="text-base font-medium text-foreground capitalize">{employee.role}</p>
+        </div>
+        <div className="glass-card p-2">
+          <p className="text-xs text-foreground-muted">Se unió</p>
+          <p className="text-base font-medium text-foreground">
             {new Date(employee.joined_at).toLocaleDateString()}
-          </span>
+          </p>
         </div>
       </div>
     </div>
